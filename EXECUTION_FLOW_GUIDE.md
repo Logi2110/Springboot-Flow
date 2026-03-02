@@ -50,11 +50,12 @@ When a request comes to your Spring Boot application, here's the **exact order**
 ```
 - **Location**: `UserController.java`
 - **Level**: Application business logic
-- **Purpose**: Handle HTTP requests, coordinate business logic
-- **Features**:
-  - `@RequestMapping` variants (`@GetMapping`, `@PostMapping`, etc.)
-  - `@Valid` for request validation
-  - `@PathVariable`, `@RequestBody`, `@RequestParam`
+- **Purpose**: Handle HTTP requests, demonstrate distinct flow scenarios
+- **Endpoints**:
+  - `GET /api/users/hello` — Flow 1: minimal, controller only
+  - `POST /api/users` — Flow 2: full with `@Valid` + service
+  - `GET /api/users/{id}` — Flow 3: programmatic guard + service
+  - `GET /api/users/error-demo` — Flow 4: throws RuntimeException
 
 ### 5. **Service Layer Execution**
 ```
@@ -125,40 +126,57 @@ When a request comes to your Spring Boot application, here's the **exact order**
 
 ## 🧪 Testing the Flow
 
-### 1. **Simple GET Request**
+Each endpoint demonstrates a distinct execution path. Run them in order to see progressive layer involvement.
+
+### Flow 1 — Minimal (Controller Only)
 ```bash
 curl -X GET http://localhost:8080/api/users/hello
 ```
-**Flow**: Filter → Interceptor → AOP → Controller → AOP → Interceptor → Filter
+**Stack**: Filter → Interceptor → AOP → Controller → AOP → Interceptor → Filter
 
-### 2. **POST with Validation**
+---
+
+### Flow 2 — Full (Bean Validation + Service)
 ```bash
-curl -X POST http://localhost:8080/api/users \\
-  -H "Content-Type: application/json" \\
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
   -d '{
     "name": "John Doe",
-    "email": "john@example.com", 
-    "department": "IT"
+    "email": "john@example.com",
+    "department": "Engineering"
   }'
 ```
-**Flow**: Filter → Interceptor → AOP → Controller → **Validation** → Service → AOP → Controller → Interceptor → Filter
+**Stack**: Filter → Interceptor → AOP → Controller → `@Valid` → Service → AOP → Interceptor → Filter
 
-### 3. **Invalid Data (Validation Error)**
+**Exception branch** — validation failure:
 ```bash
-curl -X POST http://localhost:8080/api/users \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "name": "",
-    "email": "invalid-email"
-  }'
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"name": "", "email": "not-an-email"}'
 ```
-**Flow**: Filter → Interceptor → AOP → Controller → **Validation Fails** → **Exception Handler** → Interceptor → Filter
+**Stack**: ... → `@Valid` fails → `MethodArgumentNotValidException` → `handleValidationExceptions()`
 
-### 4. **Exception Demo**
+---
+
+### Flow 3 — Programmatic Guard (Path Variable)
+```bash
+# Happy path — id > 0, proceeds to service
+curl -X GET http://localhost:8080/api/users/5
+
+# Exception branch — id <= 0, throws IllegalArgumentException
+curl -X GET http://localhost:8080/api/users/-1
+```
+**Happy path stack**: Filter → Interceptor → AOP → Controller (guard passes) → Service → AOP → Interceptor → Filter
+
+**Exception branch stack**: ... → Controller → `IllegalArgumentException` → `handleIllegalArgumentException()`
+
+---
+
+### Flow 4 — Unhandled Exception (RuntimeException)
 ```bash
 curl -X GET http://localhost:8080/api/users/error-demo
 ```
-**Flow**: Filter → Interceptor → AOP → Controller → **Exception** → **Exception Handler** → Interceptor → Filter
+**Stack**: Filter → Interceptor → AOP → Controller → `RuntimeException` → AOP `@AfterThrowing` → `GlobalExceptionHandler` → Interceptor `afterCompletion` → Filter
 
 ## 📊 Execution Flow Visualization
 

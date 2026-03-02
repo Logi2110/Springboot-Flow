@@ -1,37 +1,31 @@
 {
   "info": {
     "name": "SpringBoot Flow API",
-    "description": "Complete API collection for Spring Boot Flow Demo project showcasing execution flow, validation, and monitoring endpoints",
+    "description": "Execution flow demonstration for Spring Boot. Each folder/request maps to a distinct flow through the layer stack: Filter → Interceptor → AOP → Controller → Service → Exception Handler.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_postman_id": "flow-demo-api-collection",
     "version": {
-      "major": 1,
+      "major": 2,
       "minor": 0,
       "patch": 0
     }
   },
   "item": [
     {
-      "name": "User Management API",
-      "description": "API endpoints for user CRUD operations with validation and execution flow demonstration",
+      "name": "Execution Flows",
+      "description": "4 endpoints — each demonstrates a distinct execution path through the layer stack.",
       "item": [
         {
-          "name": "Hello - Simple GET",
+          "name": "Flow 1 — Minimal (Controller Only)",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
+            "header": [],
             "url": {
               "raw": "{{base_url}}/api/users/hello",
               "host": ["{{base_url}}"],
               "path": ["api", "users", "hello"]
             },
-            "description": "Simple GET endpoint to test basic connectivity and execution flow"
+            "description": "FLOW 1 — Minimal path. No validation. No service call.\n\nStack: Filter → Interceptor → AOP → Controller → AOP → Interceptor → Filter"
           },
           "response": [],
           "event": [
@@ -39,14 +33,12 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
                   "",
-                  "pm.test(\"Response has message and timestamp\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.message).to.exist;",
-                  "    pm.expect(jsonData.timestamp).to.exist;",
+                  "pm.test(\"Response has message and timestamp\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.message).to.exist;",
+                  "    pm.expect(json.timestamp).to.exist;",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -55,7 +47,7 @@
           ]
         },
         {
-          "name": "Create User - POST with Validation",
+          "name": "Flow 2 — Full (Bean Validation + Service)",
           "request": {
             "method": "POST",
             "header": [
@@ -74,7 +66,7 @@
               "host": ["{{base_url}}"],
               "path": ["api", "users"]
             },
-            "description": "Creates a new user with validation. Demonstrates filters, interceptors, aspects, and service layer execution flow."
+            "description": "FLOW 2 — Full path through all layers.\n\nStack: Filter → Interceptor → AOP → Controller → @Valid → Service → AOP → Interceptor → Filter"
           },
           "response": [],
           "event": [
@@ -82,23 +74,19 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"Response has user data with id\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.id).to.exist;",
+                  "    pm.expect(json.name).to.eql(\"John Doe\");",
+                  "    pm.expect(json.email).to.eql(\"john.doe@example.com\");",
+                  "    pm.expect(json.department).to.eql(\"Engineering\");",
+                  "    pm.expect(json.createdAt).to.exist;",
                   "});",
                   "",
-                  "pm.test(\"Response has user data\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.id).to.exist;",
-                  "    pm.expect(jsonData.name).to.eql(\"John Doe\");",
-                  "    pm.expect(jsonData.email).to.eql(\"john.doe@example.com\");",
-                  "    pm.expect(jsonData.department).to.eql(\"Engineering\");",
-                  "    pm.expect(jsonData.createdAt).to.exist;",
-                  "});",
-                  "",
-                  "// Store user ID for subsequent requests",
                   "if (pm.response.code === 200) {",
-                  "    var user = pm.response.json();",
-                  "    pm.environment.set(\"user_id\", user.id);",
+                  "    pm.environment.set(\"user_id\", pm.response.json().id);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -107,22 +95,16 @@
           ]
         },
         {
-          "name": "Get User by ID - Path Variable",
+          "name": "Flow 3 — Programmatic Guard (valid id — happy path)",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
+            "header": [],
             "url": {
-              "raw": "{{base_url}}/api/users/{{user_id}}",
+              "raw": "{{base_url}}/api/users/5",
               "host": ["{{base_url}}"],
-              "path": ["api", "users", "{{user_id}}"]
+              "path": ["api", "users", "5"]
             },
-            "description": "Retrieves a user by ID. Demonstrates path variable validation and service layer execution."
+            "description": "FLOW 3 — Valid ID. Manual guard (id > 0) passes in controller. Proceeds to service.\n\nStack: Filter → Interceptor → AOP → Controller (id > 0 ✓) → Service → AOP → Interceptor → Filter\n\nFor exception branch (id <= 0), see 'Exception Paths' folder."
           },
           "response": [],
           "event": [
@@ -130,15 +112,13 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
                   "",
-                  "pm.test(\"Response contains user details\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.id).to.exist;",
-                  "    pm.expect(jsonData.name).to.exist;",
-                  "    pm.expect(jsonData.email).to.exist;",
+                  "pm.test(\"Response contains user\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.id).to.eql(5);",
+                  "    pm.expect(json.name).to.exist;",
+                  "    pm.expect(json.email).to.exist;",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -147,26 +127,16 @@
           ]
         },
         {
-          "name": "Update User - PUT with Validation",
+          "name": "Flow 4 — Unhandled Exception (RuntimeException → GlobalExceptionHandler)",
           "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"John Smith\",\n  \"email\": \"john.smith@example.com\",\n  \"department\": \"DevOps\"\n}"
-            },
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "{{base_url}}/api/users/{{user_id}}",
+              "raw": "{{base_url}}/api/users/error-demo",
               "host": ["{{base_url}}"],
-              "path": ["api", "users", "{{user_id}}"]
+              "path": ["api", "users", "error-demo"]
             },
-            "description": "Updates an existing user. Demonstrates full execution flow with validation and service layer processing."
+            "description": "FLOW 4 — Controller throws RuntimeException. Caught by @ExceptionHandler(Exception.class) in GlobalExceptionHandler.\n\nStack: Filter → Interceptor → AOP → Controller → RuntimeException → AOP @AfterThrowing → GlobalExceptionHandler → Interceptor afterCompletion → Filter"
           },
           "response": [],
           "event": [
@@ -174,53 +144,14 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
+                  "pm.test(\"Status 500\", () => pm.response.to.have.status(500));",
                   "",
-                  "pm.test(\"User data updated\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.name).to.eql(\"John Smith\");",
-                  "    pm.expect(jsonData.email).to.eql(\"john.smith@example.com\");",
-                  "    pm.expect(jsonData.department).to.eql(\"DevOps\");",
-                  "    pm.expect(jsonData.updatedAt).to.exist;",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
-        },
-        {
-          "name": "Delete User - DELETE Operation",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/users/{{user_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["api", "users", "{{user_id}}"]
-            },
-            "description": "Deletes a user by ID. Demonstrates DELETE operation execution flow."
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 204 No Content\", function () {",
-                  "    pm.response.to.have.status(204);",
-                  "});",
-                  "",
-                  "pm.test(\"Response body is empty\", function () {",
-                  "    pm.expect(pm.response.text()).to.be.empty;",
+                  "pm.test(\"GlobalExceptionHandler error response\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.status).to.eql(500);",
+                  "    pm.expect(json.error).to.exist;",
+                  "    pm.expect(json.message).to.exist;",
+                  "    pm.expect(json.timestamp).to.exist;",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -231,46 +162,11 @@
       ]
     },
     {
-      "name": "Error Handling & Validation",
-      "description": "Endpoints to test exception handling, validation errors, and global exception handler",
+      "name": "Exception Paths",
+      "description": "Requests that intentionally trigger exception branches to demonstrate exception handler routing.",
       "item": [
         {
-          "name": "Error Demo - Exception Handling",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/users/error-demo",
-              "host": ["{{base_url}}"],
-              "path": ["api", "users", "error-demo"]
-            },
-            "description": "Demonstrates exception handling flow and global exception handler"
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 500 Internal Server Error\", function () {",
-                  "    pm.response.to.have.status(500);",
-                  "});",
-                  "",
-                  "pm.test(\"Error response structure\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.status).to.eql(500);",
-                  "    pm.expect(jsonData.error).to.exist;",
-                  "    pm.expect(jsonData.message).to.exist;",
-                  "    pm.expect(jsonData.timestamp).to.exist;",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
-        },
-        {
-          "name": "Invalid User ID - Validation Error",
+          "name": "Flow 3 — Programmatic Guard (invalid id → IllegalArgumentException)",
           "request": {
             "method": "GET",
             "header": [],
@@ -279,7 +175,7 @@
               "host": ["{{base_url}}"],
               "path": ["api", "users", "-1"]
             },
-            "description": "Tests path variable validation with invalid user ID"
+            "description": "FLOW 3 exception branch — id <= 0 fails the manual guard in controller.\nThrows IllegalArgumentException → caught by handleIllegalArgumentException() in GlobalExceptionHandler.\n\nStack: Filter → Interceptor → AOP → Controller → IllegalArgumentException → handleIllegalArgumentException → Interceptor afterCompletion → Filter"
           },
           "response": [],
           "event": [
@@ -287,14 +183,12 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 400 Bad Request\", function () {",
-                  "    pm.response.to.have.status(400);",
-                  "});",
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));",
                   "",
-                  "pm.test(\"Validation error response\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.status).to.eql(400);",
-                  "    pm.expect(jsonData.message).to.contain(\"positive\");",
+                  "pm.test(\"IllegalArgumentException handler response\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.status).to.eql(400);",
+                  "    pm.expect(json.message).to.include(\"positive\");",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -303,7 +197,7 @@
           ]
         },
         {
-          "name": "Invalid User Data - Bean Validation",
+          "name": "Flow 2 — Bean Validation Failure (@Valid rejection)",
           "request": {
             "method": "POST",
             "header": [
@@ -315,14 +209,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"\",\n  \"email\": \"invalid-email\",\n  \"department\": \"A very long department name that exceeds the maximum allowed length of 100 characters and should trigger validation error\"\n}"
+              "raw": "{\n  \"name\": \"\",\n  \"email\": \"not-an-email\",\n  \"department\": \"This department name is intentionally too long and exceeds the 100 character maximum limit set by @Size\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/users",
               "host": ["{{base_url}}"],
               "path": ["api", "users"]
             },
-            "description": "Tests bean validation with invalid user data (empty name, invalid email, too long department)"
+            "description": "FLOW 2 exception branch — @Valid rejects the request before controller method body executes.\nThrows MethodArgumentNotValidException → caught by handleValidationExceptions() in GlobalExceptionHandler.\n\nValidation rules triggered:\n- name: blank (@NotBlank)\n- email: invalid format (@Email)\n- department: exceeds 100 chars (@Size)\n\nStack: Filter → Interceptor → AOP → @Valid fails → MethodArgumentNotValidException → handleValidationExceptions → Interceptor afterCompletion → Filter"
           },
           "response": [],
           "event": [
@@ -330,14 +224,12 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Status code is 400 Bad Request\", function () {",
-                  "    pm.response.to.have.status(400);",
-                  "});",
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));",
                   "",
-                  "pm.test(\"Validation error response\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.status).to.eql(400);",
-                  "    pm.expect(jsonData.error).to.contain(\"Validation\");",
+                  "pm.test(\"Validation handler response\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.status).to.eql(400);",
+                  "    pm.expect(json.error).to.include(\"Validation\");",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -348,8 +240,8 @@
       ]
     },
     {
-      "name": "Actuator Endpoints",
-      "description": "Spring Boot Actuator monitoring endpoints",
+      "name": "Actuator",
+      "description": "Spring Boot Actuator monitoring endpoints — outside the app execution flow.",
       "item": [
         {
           "name": "Health Check",
@@ -485,9 +377,8 @@
       "script": {
         "type": "text/javascript",
         "exec": [
-          "// Set default user_id if not exists",
-          "if (!pm.environment.get(\"user_id\")) {",
-          "    pm.environment.set(\"user_id\", \"1\");",
+          "if (!pm.environment.get('user_id')) {",
+          "    pm.environment.set('user_id', '1');",
           "}"
         ]
       }
@@ -497,15 +388,10 @@
       "script": {
         "type": "text/javascript",
         "exec": [
-          "// Global test to check response time",
-          "pm.test(\"Response time is less than 2000ms\", function () {",
+          "pm.test(\"Response time < 2000ms\", () => {",
           "    pm.expect(pm.response.responseTime).to.be.below(2000);",
           "});",
-          "",
-          "// Log execution details",
-          "console.log(\"Request:\", pm.request.method, pm.request.url.toString());",
-          "console.log(\"Response Time:\", pm.response.responseTime + \"ms\");",
-          "console.log(\"Status:\", pm.response.status);"
+          "console.log(`[${pm.request.method}] ${pm.request.url} → ${pm.response.status} (${pm.response.responseTime}ms)`);"
         ]
       }
     }
@@ -514,13 +400,13 @@
     {
       "key": "base_url",
       "value": "http://localhost:8080",
-      "description": "Base URL for the Spring Boot Flow API",
+      "description": "Spring Boot application base URL",
       "type": "string"
     },
     {
       "key": "user_id",
       "value": "1",
-      "description": "User ID for testing individual user operations",
+      "description": "Captured from Flow 2 POST response — used in Flow 3 happy path",
       "type": "string"
     }
   ]

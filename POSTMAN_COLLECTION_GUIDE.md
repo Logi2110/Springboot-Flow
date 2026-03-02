@@ -1,91 +1,76 @@
 # Spring Boot Flow API - Postman Collection Guide
 
-## Files Created
+## Files
 - `SpringBoot-Flow-API.postman_collection.json` - Complete API collection
 - `SpringBoot-Flow-Development.postman_environment.json` - Environment variables
 
+---
+
 ## Import Instructions
 
-### 1. Import Collection
-1. Open Postman
-2. Click **Import** button
-3. Select `SpringBoot-Flow-API.postman_collection.json`
-4. Click **Import**
+1. Open Postman → click **Import**
+2. Select `SpringBoot-Flow-API.postman_collection.json` → **Import**
+3. Import again → select `SpringBoot-Flow-Development.postman_environment.json`
+4. Select **"SpringBoot Flow - Development"** from the environment dropdown
 
-### 2. Import Environment
-1. Click **Import** button again
-2. Select `SpringBoot-Flow-Development.postman_environment.json`
-3. Click **Import**
-4. Select "SpringBoot Flow - Development" environment from the dropdown
+---
 
 ## Collection Structure
 
-### 📁 User Management API
-- **GET** `/api/users/hello` - Simple connectivity test
-- **POST** `/api/users` - Create user with validation
-- **GET** `/api/users/{id}` - Get user by ID
-- **PUT** `/api/users/{id}` - Update user
-- **DELETE** `/api/users/{id}` - Delete user
+### 📁 Execution Flows
+Each request demonstrates a **distinct path** through the layer stack.
 
-### 📁 Error Handling & Validation
-- **GET** `/api/users/error-demo` - Exception handling demo
-- **GET** `/api/users/-1` - Invalid ID validation
-- **POST** `/api/users` - Invalid data validation
+| Request | Endpoint | Layers Involved |
+|---|---|---|
+| Flow 1 — Minimal | `GET /api/users/hello` | Filter → Interceptor → AOP → Controller |
+| Flow 2 — Full | `POST /api/users` | + `@Valid` → Service |
+| Flow 3 — Programmatic Guard (happy) | `GET /api/users/5` | + manual guard passes → Service |
+| Flow 4 — Unhandled Exception | `GET /api/users/error-demo` | + RuntimeException → GlobalExceptionHandler |
 
-### 📁 Actuator Endpoints
-- **GET** `/actuator/health` - Application health
-- **GET** `/actuator/info` - Application info
-- **GET** `/actuator/metrics` - Metrics overview
-- **GET** `/actuator/metrics/jvm.memory.used` - Memory metrics
+### 📁 Exception Paths
+Requests that trigger exception handler branches.
 
-## Testing Workflow
+| Request | Endpoint | Exception Handler |
+|---|---|---|
+| Flow 3 — Guard fails | `GET /api/users/-1` | `handleIllegalArgumentException()` |
+| Flow 2 — Validation fails | `POST /api/users` (invalid body) | `handleValidationExceptions()` |
 
-### Quick Test Sequence
-1. **Health Check** - Verify application is running
-2. **Hello Endpoint** - Test basic connectivity
-3. **Create User** - Test full execution flow with validation
-4. **Get User** - Verify creation and retrieval
-5. **Update User** - Test update functionality
-6. **Delete User** - Test deletion
-7. **Error Demo** - Test exception handling
+### 📁 Actuator
+Spring Boot monitoring endpoints — outside the execution flow.
 
-### Validation Tests
-- Run "Invalid User Data" to see validation errors
-- Run "Invalid User ID" to see path validation
-- Check logs to see execution flow (Filter → Interceptor → Aspect → Controller → Service)
+| Request | Endpoint |
+|---|---|
+| Health Check | `GET /actuator/health` |
+| Application Info | `GET /actuator/info` |
+| Metrics Overview | `GET /actuator/metrics` |
+| JVM Memory Metrics | `GET /actuator/metrics/jvm.memory.used` |
 
-## Features Included
+---
 
-### ✅ Test Scripts
-- Automatic response validation
-- Status code verification
-- Response structure validation
-- Performance testing (response time < 2000ms)
+## Recommended Run Sequence
 
-### ✅ Environment Variables
-- `{{base_url}}` - Configurable server URL
-- `{{user_id}}` - Automatically captured from create user response
+1. **Health Check** — confirm app is running
+2. **Flow 1** — minimal path, see Filter/Interceptor/AOP in logs
+3. **Flow 2** — full path, see validation + service in logs
+4. **Flow 3 (happy)** — service called, see `processUser` vs `getUserById` in logs
+5. **Flow 4** — see `@AfterThrowing` + `GlobalExceptionHandler` in logs
+6. **Flow 3 exception** — see `handleIllegalArgumentException()` in logs
+7. **Flow 2 validation fail** — see `handleValidationExceptions()` in logs
 
-### ✅ Request Examples
-- Valid request bodies with proper data types
-- Invalid request examples for validation testing
-- Proper headers and content types
-
-### ✅ Execution Flow Coverage
-- Tests all layers: Filter → Interceptor → Aspect → Controller → Service
-- Validates exception handling and global error handler
-- Covers all HTTP methods (GET, POST, PUT, DELETE)
+---
 
 ## Environment Variables
 
-| Variable | Default Value | Description |
-|----------|---------------|-------------|
-| `base_url` | `http://localhost:8080` | API base URL |
-| `user_id` | `1` | User ID for individual operations |
-| `api_version` | `v1` | API version |
+| Variable | Default | Description |
+|---|---|---|
+| `base_url` | `http://localhost:8080` | Spring Boot application base URL |
+| `user_id` | `1` | Captured from Flow 2 POST response |
 
-## Notes
-- Make sure your Spring Boot application is running on port 8080
-- The collection automatically captures user IDs from create operations
-- All requests include proper validation and error handling tests
-- Check the Postman console for execution flow logs
+---
+
+## What the Test Scripts Validate
+
+- **Status codes** — correct HTTP status per flow
+- **Response structure** — verifies error response fields (`status`, `error`, `message`, `timestamp`)
+- **Response time** — global test: must be < 2000ms
+- **Console log** — every request logs `[METHOD] URL → STATUS (Xms)`

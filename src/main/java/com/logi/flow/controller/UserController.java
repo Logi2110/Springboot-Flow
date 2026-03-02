@@ -14,7 +14,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 /**
- * Controller demonstrating various method-level annotations and execution flow
+ * Controller demonstrating different execution flow scenarios.
+ *
+ * Flow 1 - /hello          : Minimal flow — Controller only, no validation, no service
+ * Flow 2 - POST /          : Full flow  — Bean validation (@Valid) → Service layer
+ * Flow 3 - GET /{id}       : Programmatic exception — manual throw → IllegalArgumentException handler
+ * Flow 4 - GET /error-demo : Unhandled exception — RuntimeException → global exception handler
  */
 @RestController
 @RequestMapping("/api/users")
@@ -28,78 +33,54 @@ public class UserController {
     private UserService userService;
 
     /**
-     * Simple GET endpoint
+     * FLOW 1: Minimal flow
+     * Filter → Interceptor → AOP → Controller (no validation, no service)
      */
     @GetMapping("/hello")
     public ResponseEntity<Map<String, String>> hello() {
         logger.info("📋 3. CONTROLLER - EXECUTING: hello()");
-        
+
         Map<String, String> response = Map.of(
             "message", "Hello from Spring Boot Flow Demo!",
             "timestamp", String.valueOf(System.currentTimeMillis())
         );
-        
+
         return ResponseEntity.ok(response);
     }
 
     /**
-     * POST endpoint with validation and service call
+     * FLOW 2: Full flow with bean validation and service layer
+     * Filter → Interceptor → AOP → Controller → @Valid → Service
      */
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request) {
-        logger.info("📋 3. CONTROLLER - EXECUTING: createUser() with request: {}", request);
-        
-        // Call service layer
-        UserResponse response = userService.createUser(request);
-        
-        // Publish application event (demonstrates event-driven architecture)
-        // eventPublisher.publishEvent(new UserCreatedEvent(response));
-        
+    public ResponseEntity<UserResponse> processUser(@Valid @RequestBody UserRequest request) {
+        logger.info("📋 3. CONTROLLER - EXECUTING: processUser() with request: {}", request);
+
+        UserResponse response = userService.processUser(request);
+
         logger.info("📋 5. CONTROLLER - RETURNING: {}", response);
         return ResponseEntity.ok(response);
     }
 
     /**
-     * GET endpoint with path variable validation
+     * FLOW 3: Programmatic exception flow
+     * Filter → Interceptor → AOP → Controller → manual throw → IllegalArgumentException handler
      */
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         logger.info("📋 3. CONTROLLER - EXECUTING: getUserById() with id: {}", id);
-        
+
         if (id <= 0) {
             throw new IllegalArgumentException("User ID must be positive");
         }
-        
+
         UserResponse response = userService.getUserById(id);
         return ResponseEntity.ok(response);
     }
 
     /**
-     * PUT endpoint demonstrating exception handling
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, 
-                                                  @Valid @RequestBody UserRequest request) {
-        logger.info("📋 3. CONTROLLER - EXECUTING: updateUser() with id: {}, request: {}", 
-                   id, request);
-        
-        UserResponse response = userService.updateUser(id, request);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * DELETE endpoint
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        logger.info("📋 3. CONTROLLER - EXECUTING: deleteUser() with id: {}", id);
-        
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * Endpoint that demonstrates exception handling
+     * FLOW 4: Unhandled exception flow
+     * Filter → Interceptor → AOP → Controller → RuntimeException → GlobalExceptionHandler
      */
     @GetMapping("/error-demo")
     public ResponseEntity<String> errorDemo() {
