@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-03-02T00:00:00.000Z" agent="Spring Boot Flow Generator" etag="spring-boot-layered-flow" version="21.7.5">
+  <diagram name="Spring Boot Layered Architecture Flow" id="spring-boot-layered-architecture-flow">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- HTTP Request Flow Container -->
+        <mxCell id="http-container" value="🌐 HTTP Request Flow" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#01579b;fontSize=16;fontStyle=1;startSize=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="1120" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="start-request" value="Client HTTP Request" style="ellipse;whiteSpace=wrap;html=1;fillColor=#6c5ce7;strokeColor=#5f3dc4;strokeWidth=3;fontColor=#ffffff;fontSize=14;fontStyle=1;" vertex="1" parent="http-container">
+          <mxGeometry x="80" y="60" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="end-response" value="Client HTTP Response" style="ellipse;whiteSpace=wrap;html=1;fillColor=#6c5ce7;strokeColor=#5f3dc4;strokeWidth=3;fontColor=#ffffff;fontSize=14;fontStyle=1;" vertex="1" parent="http-container">
+          <mxGeometry x="900" y="60" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Servlet Container Layer -->
+        <mxCell id="servlet-container" value="🔴 Servlet Container Layer" style="swimlane;whiteSpace=wrap;html=1;fillColor=#ffebee;strokeColor=#c62828;fontSize=16;fontStyle=1;startSize=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="200" width="1120" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="filter-before" value="🔥 Filter BEFORE&#xa;• Logging&#xa;• Headers&#xa;• Timing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ff7675;strokeColor=#d63031;strokeWidth=2;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="servlet-container">
+          <mxGeometry x="100" y="60" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="filter-after" value="🔥 Filter AFTER&#xa;• Response logging&#xa;• Cleanup&#xa;• Duration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ff7675;strokeColor=#d63031;strokeWidth=2;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="servlet-container">
+          <mxGeometry x="880" y="60" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Spring MVC Layer -->
+        <mxCell id="mvc-layer" value="🟡 Spring MVC Layer" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e8f5e8;strokeColor=#2e7d32;fontSize=16;fontStyle=1;startSize=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="1120" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="interceptor-pre" value="🚀 Interceptor PRE&#xa;• Authentication&#xa;• Authorization&#xa;• Request setup" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#74b9ff;strokeColor=#0984e3;strokeWidth=2;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="mvc-layer">
+          <mxGeometry x="100" y="60" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="interceptor-post" value="🚀 Interceptor POST&#xa;• ModelAndView&#xa;• Response modification" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#74b9ff;strokeColor=#0984e3;strokeWidth=2;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="mvc-layer">
+          <mxGeometry x="720" y="60" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="interceptor-after" value="🚀 Interceptor AFTER&#xa;• Final cleanup&#xa;• Exception handling" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#74b9ff;strokeColor=#0984e3;strokeWidth=2;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="mvc-layer">
+          <mxGeometry x="880" y="60" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- AOP Proxy Layer -->
+        <mxCell id="aop-layer" value="🔵 AOP Proxy Layer" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=16;fontStyle=1;startSize=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="520" width="1120" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="aop-before" value="🎯 @Around BEFORE&#xa;🎯 @Before Advice" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a29bfe;strokeColor=#6c5ce7;strokeWidth=2;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="aop-layer">
+          <mxGeometry x="100" y="60" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="aop-after" value="🎯 @Around AFTER&#xa;🎯 @After Advice&#xa;🎯 @AfterReturning" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a29bfe;strokeColor=#6c5ce7;strokeWidth=2;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="aop-layer">
+          <mxGeometry x="720" y="60" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Business Layer -->
+        <mxCell id="business-layer" value="🟢 Business Layer" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e0f2f1;strokeColor=#00695c;fontSize=16;fontStyle=1;startSize=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="680" width="1120" height="160" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="controller" value="📋 Controller&#xa;• Request mapping&#xa;• Validation&#xa;• Orchestration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#00b894;strokeColor=#00a085;strokeWidth=2;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="business-layer">
+          <mxGeometry x="100" y="60" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Service AOP Subgraph -->
+        <mxCell id="service-aop-container" value="Service AOP" style="swimlane;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#ef6c00;fontSize=14;fontStyle=1;startSize=30;" vertex="1" parent="business-layer">
+          <mxGeometry x="280" y="50" width="420" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="service-aop-before" value="🔧 Service @Around&#xa;BEFORE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#00cec9;strokeColor=#00b894;strokeWidth=2;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="service-aop-container">
+          <mxGeometry x="20" y="40" width="110" height="50" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="service-logic" value="🔧 Service Logic&#xa;• Business rules&#xa;• Data processing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#00cec9;strokeColor=#00b894;strokeWidth=2;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="service-aop-container">
+          <mxGeometry x="150" y="40" width="120" height="50" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="service-aop-after" value="🔧 Service @Around&#xa;AFTER" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#00cec9;strokeColor=#00b894;strokeWidth=2;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="service-aop-container">
+          <mxGeometry x="290" y="40" width="110" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Exception Handling -->
+        <mxCell id="exception-layer" value="🔴 Exception Handling" style="swimlane;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c2185b;fontSize=16;fontStyle=1;startSize=40;" vertex="1" parent="1">
+          <mxGeometry x="400" y="880" width="400" height="120" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="exception-handler" value="❌ GlobalExceptionHandler&#xa;• Error mapping&#xa;• Error responses" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fd79a8;strokeColor=#e84393;strokeWidth=2;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="exception-layer">
+          <mxGeometry x="100" y="60" width="200" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Main Flow Connections -->
+        <mxCell id="connection1" edge="1" parent="1" source="start-request" target="filter-before">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="connection2" edge="1" parent="1" source="filter-before" target="interceptor-pre">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="connection3" edge="1" parent="1" source="interceptor-pre" target="aop-before">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="connection4" edge="1" parent="1" source="aop-before" target="controller">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="connection5" edge="1" parent="1" source="controller" target="service-aop-before">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="connection6" edge="1" parent="1" source="service-aop-before" target="service-logic">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="connection7" edge="1" parent="1" source="service-logic" target="service-aop-after">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="connection8" edge="1" parent="1" source="service-aop-after" target="aop-after">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="connection9" edge="1" parent="1" source="aop-after" target="interceptor-post">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="connection10" edge="1" parent="1" source="interceptor-post" target="interceptor-after">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="connection11" edge="1" parent="1" source="interceptor-after" target="filter-after">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="connection12" edge="1" parent="1" source="filter-after" target="end-response">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Exception Flow Connections -->
+        <mxCell id="exception-connection1" edge="1" parent="1" source="controller" target="exception-handler" style="dashed=1;strokeColor=#e84393;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="exception-connection2" edge="1" parent="1" source="service-logic" target="exception-handler" style="dashed=1;strokeColor=#e84393;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="exception-connection3" edge="1" parent="1" source="aop-before" target="exception-handler" style="dashed=1;strokeColor=#e84393;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="exception-connection4" edge="1" parent="1" source="service-aop-before" target="exception-handler" style="dashed=1;strokeColor=#e84393;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="exception-connection5" edge="1" parent="1" source="exception-handler" target="interceptor-after" style="dashed=1;strokeColor=#e84393;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

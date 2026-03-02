@@ -1,3 +1,28 @@
 spring:
   application:
     name: flow
+
+# Enable detailed logging to see the execution flow
+logging:
+  level:
+    com.logi.flow: INFO
+    org.springframework.web: DEBUG
+    org.springframework.aop: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Server configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# Actuator endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
