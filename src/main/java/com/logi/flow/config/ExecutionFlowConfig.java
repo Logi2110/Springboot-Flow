@@ -7,6 +7,8 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -17,6 +19,8 @@ import java.util.ListIterator;
 
 @Configuration
 @EnableAspectJAutoProxy
+@EnableAsync
+@EnableScheduling
 public class ExecutionFlowConfig implements WebMvcConfigurer {
 
     @Bean

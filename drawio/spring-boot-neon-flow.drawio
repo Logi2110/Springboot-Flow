@@ -423,4 +423,227 @@
       </root>
     </mxGraphModel>
   </diagram>
+  <diagram id="event-async-layer" name="Event / Async Layer (Layer 5)">
+    <mxGraphModel dx="1200" dy="900" grid="0" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1400" pageHeight="1600" math="0" shadow="0" background="#000000">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Spring Boot -- Event / Async Layer (Layer 5)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#00E7FF;fontStyle=1;fontSize=22;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="300" y="18" width="760" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- LEFT COLUMN: Flow 7 — Event chain (GET /api/users/event-demo) -->
+        <!-- Controller publishes event directly — no UserService step  -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+
+        <mxCell id="col1-title" value="Flow 7 — GET /api/users/event-demo (Event Chain)" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#BC13FE;fontStyle=1;fontSize=14;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="70" width="420" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- e1: HTTP Request -->
+        <mxCell id="ev1" value="[1] Client - GET /api/users/event-demo?name=...&amp;email=..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="90" y="120" width="360" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="ee1" value="Filter → Interceptor → AOP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#FF007F;strokeWidth=1.5;fontColor=#FF007F;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="ev1" target="ev2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- e2: Controller -->
+        <mxCell id="ev2" value="[2] Controller - eventDemo() | thread=http-nio-exec-N" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="90" y="224" width="360" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="ee2" value="publishEvent(UserProcessedEvent)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="ev2" target="ev4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- e4: ApplicationEventPublisher -->
+        <mxCell id="ev4" value="[3] ApplicationEventPublisher.publishEvent(UserProcessedEvent)&#xa;dispatches to all matching listeners" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="90" y="338" width="360" height="64" as="geometry" />
+        </mxCell>
+
+        <!-- FORK: sync branch (left) and async branch (right under col1) -->
+        <mxCell id="ee4a" value="SYNC — same thread, blocks" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="ev4" target="ev5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ee4b" value="ASYNC — thread pool" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="ev4" target="ev6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- e5: Sync listener -->
+        <mxCell id="ev5" value="[4a] @EventListener (SYNC)&#xa;UserEventListener.onUserProcessedSync()&#xa;thread = http-nio-exec-N (same — HTTP waits)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=12;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="480" width="210" height="74" as="geometry" />
+        </mxCell>
+
+        <!-- e6: Async listener -->
+        <mxCell id="ev6" value="[4b] @Async @EventListener&#xa;UserEventListener.onUserProcessedAsync()&#xa;thread = task-N  (fires AFTER HTTP 200 sent)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=12;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="280" y="480" width="210" height="74" as="geometry" />
+        </mxCell>
+
+        <!-- e5 → HTTP response (sync returns, publishEvent returns, controller returns) -->
+        <mxCell id="ee5" value="returns" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="ev5" target="ev7">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="165" y="634" />
+              <mxPoint x="60" y="634" />
+              <mxPoint x="60" y="657" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- e7: HTTP Response -->
+        <mxCell id="ev7" value="[5] HTTP 200 Response — AOP → Interceptor → Filter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="90" y="630" width="360" height="54" as="geometry" />
+        </mxCell>
+
+        <!-- Async listener finish note -->
+        <mxCell id="ev6b" value="⚡ Async finishes ~500ms later&#xa;(after HTTP 200 already sent)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;strokeWidth=1;fontColor=#FF8C00;fontStyle=2;fontSize=11;shadow=0;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="614" width="210" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ee6b" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF8C00;strokeWidth=1;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="ev6" target="ev6b">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Log order callout for Flow 7 -->
+        <mxCell id="ev-timeline" value="⏱ Log order to observe:&#xa;1. CONTROLLER - EXECUTING          (http-nio-exec-N)&#xa;2. EVENT LISTENER (SYNC) - RECEIVED (http-nio-exec-N) ← blocks HTTP&#xa;3. EVENT LISTENER (SYNC) - DONE     (http-nio-exec-N)&#xa;4. CONTROLLER - RETURNING           (http-nio-exec-N) ← 200 sent&#xa;5. EVENT LISTENER (ASYNC) - RECEIVED (task-N) ← after response&#xa;6. EVENT LISTENER (ASYNC) - DONE     (task-N) ← ~500ms later" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="710" width="390" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- RIGHT COLUMN: Flow 6 — @Async direct (GET /async-demo)    -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+
+        <mxCell id="col2-title" value="Flow 6 — GET /api/users/async-demo (@Async direct)" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#FF8C00;fontStyle=1;fontSize=14;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="580" y="70" width="460" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- a1: HTTP Request -->
+        <mxCell id="as1" value="[1] Client - GET /api/users/async-demo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="610" y="120" width="400" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="ae1" value="Filter → Interceptor → AOP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#FF007F;strokeWidth=1.5;fontColor=#FF007F;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="as1" target="as2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- a2: Controller -->
+        <mxCell id="as2" value="[2] Controller - asyncDemo() | thread=http-nio-exec-N" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="610" y="224" width="400" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="ae2" value="calls asyncDemoService.runAsync()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="as2" target="as3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- a3: AOP Proxy intercepts @Async -->
+        <mxCell id="as3" value="[3] Spring AOP Proxy — intercepts @Async method call&#xa;submits runAsync() to thread pool executor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="610" y="328" width="400" height="64" as="geometry" />
+        </mxCell>
+
+        <!-- Fork: HTTP response (left) + async task (right) -->
+        <mxCell id="ae3a" value="returns immediately" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="as3" target="as4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae3b" value="submit to thread pool" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="as3" target="as5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- a4: HTTP 202 response -->
+        <mxCell id="as4" value="[4] HTTP 202 Accepted — response sent NOW&#xa;BEFORE async task finishes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="610" y="466" width="235" height="64" as="geometry" />
+        </mxCell>
+
+        <!-- a5: Async task -->
+        <mxCell id="as5" value="[5] AsyncDemoService.runAsync()&#xa;thread = task-N (thread pool)&#xa;runs ~2s, finishes after HTTP response" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="860" y="466" width="150" height="84" as="geometry" />
+        </mxCell>
+
+        <!-- Timeline note — corrected log order -->
+        <mxCell id="timeline" value="⏱ Log order to observe:&#xa;1. CONTROLLER - EXECUTING   (http-nio-exec-N)&#xa;2. CONTROLLER - RETURNING   (http-nio-exec-N) ← 202 sent&#xa;3. ASYNC SERVICE - STARTED  (task-N) ← AFTER response&#xa;4. ASYNC SERVICE - FINISHED (task-N) ← ~2s later" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1;fontColor=#F7EB07;fontStyle=0;fontSize=11;shadow=0;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="600" width="400" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- @Async rule callout -->
+        <mxCell id="asyncrule" value="⚠ @Async self-call rule:&#xa;@Async method MUST be called from a&#xa;DIFFERENT class — self-calls skip the&#xa;AOP proxy and @Async is silently ignored." style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF007F;strokeWidth=1;fontColor=#FF007F;fontStyle=0;fontSize=11;shadow=0;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="710" width="400" height="74" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- BOTTOM: @Scheduled — runs independently of HTTP requests   -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+
+        <mxCell id="sched-title" value="@Scheduled — time-driven tasks (independent of HTTP requests)" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#1B6EFF;fontStyle=1;fontSize=14;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="840" width="900" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- sched trigger -->
+        <mxCell id="sc1" value="[1] Scheduler Thread — Spring's TaskScheduler (background daemon)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="890" width="490" height="54" as="geometry" />
+        </mxCell>
+
+        <!-- three modes side by side -->
+        <mxCell id="esc1a" value="fixedRate=2min" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.2;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="sc1" target="sc2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="esc1b" value="fixedDelay=30s" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="sc1" target="sc3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="esc1c" value="cron=0 0 8 * * *" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.8;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="sc1" target="sc4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sc2" value="fixedRate&#xa;Every N ms from START of last run&#xa;ScheduledDemoTask.periodicCleanup()&#xa;(active — fires every 2 min)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontStyle=0;fontSize=12;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1014" width="200" height="84" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sc3" value="fixedDelay&#xa;N ms after END of last run&#xa;Guarantees gap between runs&#xa;(commented out — example only)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;strokeWidth=1;fontColor=#1B6EFF;fontStyle=2;fontSize=12;shadow=0;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="215" y="1014" width="200" height="84" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sc4" value="cron&#xa;Exact time-of-day scheduling&#xa;Format: sec min hr dom mon dow&#xa;(commented out — example only)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;strokeWidth=1;fontColor=#1B6EFF;fontStyle=2;fontSize=12;shadow=0;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="370" y="1014" width="200" height="84" as="geometry" />
+        </mxCell>
+
+        <!-- Scheduler note -->
+        <mxCell id="schnote" value="@EnableScheduling on ExecutionFlowConfig&#xa;Scheduler runs independently — no HTTP request involved" style="text;html=1;align=left;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#1B6EFF;fontStyle=2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1112" width="520" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- Legend                                                      -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+
+        <mxCell id="leg-title" value="Layers" style="text;html=1;align=left;fontColor=#FFFFFF;fontStyle=1;fontSize=13;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="120" width="80" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="leg1" value="Client / Response" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;fontColor=#00E7FF;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="150" width="180" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2" value="Filter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF007F;fontColor=#FF007F;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="182" width="180" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3" value="Controller / AOP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;fontColor=#39FF14;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="214" width="180" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg4" value="Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;fontColor=#F7EB07;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="246" width="180" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg5" value="EventPublisher / Proxy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;fontColor=#BC13FE;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="278" width="180" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg6" value="@Async / AsyncService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;fontColor=#FF8C00;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="310" width="180" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg7" value="@Scheduled" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;fontColor=#1B6EFF;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="342" width="180" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- Side label -->
+        <mxCell id="lbl" value="EVENT / ASYNC LAYER (5)" style="text;html=1;align=center;verticalAlign=middle;fontColor=#00E7FF;fontStyle=1;fontSize=13;rotation=-90;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="14" y="480" width="200" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
 </mxfile>

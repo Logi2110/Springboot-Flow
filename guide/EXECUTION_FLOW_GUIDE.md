@@ -57,6 +57,8 @@ When a request comes to your Spring Boot application, here's the **exact order**
   - `GET /api/users/{id}` — Flow 3: programmatic guard + service
   - `GET /api/users/error-demo` — Flow 4: throws RuntimeException
   - `GET /api/users/startup-info` — Flow 5: startup + bean lifecycle events
+  - `GET /api/users/async-demo` — Flow 6: `@Async` fire-and-forget, returns HTTP 202 immediately
+  - `GET /api/users/event-demo` — Flow 7: publishes `UserProcessedEvent`, observe sync + async listeners
 
 ### 5. **Service Layer Execution**
 ```
@@ -185,6 +187,45 @@ curl -X GET http://localhost:8080/api/users/error-demo
 ```bash
 curl -X GET http://localhost:8080/api/users/startup-info
 ```
+**Stack**: Filter → Interceptor → AOP → Controller → `StartupInfoStore.toResponse()` → AOP → Interceptor → Filter
+
+---
+
+### Flow 6 — @Async Direct (fire-and-forget)
+```bash
+curl -X GET http://localhost:8080/api/users/async-demo
+```
+**Stack**: Filter → Interceptor → AOP → Controller → `AsyncDemoService.runAsync()` [submitted to thread pool] → HTTP 202
+
+**Log order to observe**:
+1. `CONTROLLER - EXECUTING` (http-nio-exec-N)
+2. `CONTROLLER - RETURNING` (http-nio-exec-N) ← **202 sent here**
+3. `ASYNC SERVICE - STARTED` (task-N) ← **after response**
+4. `ASYNC SERVICE - FINISHED` (task-N) ← ~2s later
+
+---
+
+### Flow 7 — Event Chain Demo
+```bash
+# Default params
+curl -X GET http://localhost:8080/api/users/event-demo
+
+# Custom name/email
+curl -X GET "http://localhost:8080/api/users/event-demo?name=Alice&email=alice@example.com"
+```
+**Stack**: Filter → Interceptor → AOP → Controller → `publishEvent(UserProcessedEvent)` → sync listener (HTTP thread) + async listener (task-N) → HTTP 200
+
+**Log order to observe**:
+1. `CONTROLLER - EXECUTING` (http-nio-exec-N)
+2. `EVENT LISTENER (SYNC) - RECEIVED` (http-nio-exec-N) ← **same thread, blocks HTTP**
+3. `EVENT LISTENER (SYNC) - DONE` (http-nio-exec-N)
+4. `CONTROLLER - RETURNING` (http-nio-exec-N) ← **200 sent here**
+5. `EVENT LISTENER (ASYNC) - RECEIVED` (task-N) ← **after response**
+6. `EVENT LISTENER (ASYNC) - DONE` (task-N) ← ~500ms later
+
+---
+
+
 **Stack**: Filter → Interceptor → AOP → Controller → `StartupInfoStore.toResponse()` → AOP → Interceptor → Filter
 
 **Returns**: JSON with `startupSequence` — a live list of events captured by every lifecycle hook during boot:

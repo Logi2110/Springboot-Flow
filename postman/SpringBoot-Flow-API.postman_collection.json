@@ -13,7 +13,7 @@
   "item": [
     {
       "name": "Execution Flows",
-      "description": "5 endpoints — each demonstrates a distinct execution path through the layer stack.",
+      "description": "7 endpoints — each demonstrates a distinct execution path through the layer stack.",
       "item": [
         {
           "name": "Flow 1 — Minimal (Controller Only)",
@@ -200,8 +200,74 @@
                 "type": "text/javascript"
               }
             }
-          ]
-        }
+          ]        },
+        {
+          "name": "Flow 6 — Async Demo (fire-and-forget @Async)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/async-demo",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "async-demo"]
+            },
+            "description": "FLOW 6 — @Async direct demo (fire-and-forget).\n\nWhat to observe in the logs (order matters):\n  1. CONTROLLER - EXECUTING   (HTTP thread)\n  2. CONTROLLER - RETURNING   (HTTP thread — 202 sent BEFORE async finishes)\n  3. ASYNC SERVICE - STARTED  (task-N thread)\n  4. ASYNC SERVICE - FINISHED (task-N thread — ~2s after response)\n\nTip: also try Flow 7 (GET /api/users/event-demo) to observe the event chain:\n  sync listener on HTTP thread → HTTP 200 sent → async listener on task-N.\n\nStack: Filter → Interceptor → AOP → Controller → AsyncDemoService.runAsync() [thread pool] → HTTP 202"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 202 Accepted\", () => pm.response.to.have.status(202));",
+                  "",
+                  "pm.test(\"Response has message and requestId\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.message).to.include('Async task started');",
+                  "    pm.expect(json.requestId).to.exist;",
+                  "    pm.expect(json.hint).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]        },
+        {
+          "name": "Flow 7 — Event Demo (UserProcessedEvent chain)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/event-demo?name=Demo%20User&email=demo%40example.com",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "event-demo"],
+              "query": [
+                { "key": "name",  "value": "Demo User" },
+                { "key": "email", "value": "demo@example.com" }
+              ]
+            },
+            "description": "FLOW 7 — Dedicated event chain demo.\n\nPublishes UserProcessedEvent directly from the controller. Isolates event observation from the user-creation flow (Flow 2).\n\nWhat to observe in the logs (order matters):\n  1. CONTROLLER - EXECUTING            (HTTP thread — http-nio-exec-N)\n  2. EVENT LISTENER (SYNC) - RECEIVED  (same HTTP thread — blocks here)\n  3. EVENT LISTENER (SYNC) - DONE      (same HTTP thread)\n  4. CONTROLLER - RETURNING            (HTTP thread — HTTP 200 sent)\n  5. EVENT LISTENER (ASYNC) - RECEIVED (task-N thread — fires AFTER response)\n  6. EVENT LISTENER (ASYNC) - DONE     (task-N thread — ~500ms later)\n\nQuery params (both optional):\n  name  — included in the event payload (default: Demo User)\n  email — included in the event payload (default: demo@example.com)\n\nStack: Filter → Interceptor → AOP → Controller → publishEvent() → sync listener (HTTP thread) + async listener (task-N) → HTTP 200"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"Response has expected fields\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.message).to.include('UserProcessedEvent published');",
+                  "    pm.expect(json.name).to.exist;",
+                  "    pm.expect(json.email).to.exist;",
+                  "    pm.expect(json.hint).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]        }
       ]
     },
     {

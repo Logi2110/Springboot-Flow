@@ -22,6 +22,11 @@
 | **@PostConstruct / @PreDestroy** | `lifecycle/BeanLifecycleDemoBean.java` | Init / cleanup hooks on a single bean after injection / before destruction |
 | **BeanPostProcessor** | `lifecycle/FlowBeanPostProcessor.java` | Intercepts every bean before/after its init method (used by AOP, `@Async`, etc.) |
 | **BeanFactoryPostProcessor** | `lifecycle/FlowBeanFactoryPostProcessor.java` | Inspects all bean definitions before any instance is created |
+| **ApplicationEventPublisher** | `controller/UserController.java` | Fires `UserProcessedEvent` in Flow 7 (`GET /event-demo`) |
+| **@EventListener (sync)** | `event/UserEventListener.java` | Handles event in the same HTTP thread |
+| **@Async @EventListener** | `event/UserEventListener.java` | Handles event in a background thread pool |
+| **@Async Service** | `event/AsyncDemoService.java` | Fire-and-forget background task (Flow 6) |
+| **@Scheduled** | `event/ScheduledDemoTask.java` | Fires every 2 minutes — fixedRate demo |
 
 ---
 
@@ -66,16 +71,39 @@
 
 ---
 
-### 5. Event / Async Layer
+### ~~5. Event / Async Layer~~ ✅ Added
 
-| Layer | Annotation | When Used |
+| Layer | Location | When Used |
 |---|---|---|
-| **Event Publisher** | `ApplicationEventPublisher` | Decoupled communication between beans |
-| **Event Listener** | `@EventListener`, `@TransactionalEventListener` | React to application events |
-| **Async Processing** | `@Async` | Background threads without blocking HTTP response |
-| **Scheduler** | `@Scheduled` | Time-based recurring tasks (cron, fixed-rate) |
+| **Event Publisher** | `controller/UserController.java` | Fires `UserProcessedEvent` in Flow 7 (`GET /event-demo`) |
+| **@EventListener (sync)** | `event/UserEventListener.java` | Handles event in the HTTP request thread — lightweight, mandatory side effects |
+| **@Async @EventListener** | `event/UserEventListener.java` | Handles event in a thread pool thread — slow/optional side effects (email, push) |
+| **@Async Service** | `event/AsyncDemoService.java` | Fire-and-forget background task triggered by Flow 6 |
+| **@Scheduled** | `event/ScheduledDemoTask.java` | `fixedRate=2min` — periodic background task demo |
 
-> 💡 `ApplicationEventPublisher` is already referenced (commented out) in `UserController.java`
+**Event flow** (triggered by `GET /api/users/event-demo` — Flow 7):
+```
+Controller.eventDemo()
+     │
+     ├─ eventPublisher.publishEvent(UserProcessedEvent)
+     │        │
+     │        ├─ UserEventListener.onUserProcessedSync()   ← SYNC: same HTTP thread, blocks here — HTTP waits
+     │        └─ UserEventListener.onUserProcessedAsync()  ← ASYNC: thread pool, fires AFTER HTTP 200 sent
+     │
+     └─ HTTP 200 returned (after sync listener completes)
+```
+
+**@Async flow** (triggered by `GET /api/users/async-demo` — Flow 6):
+```
+Controller calls asyncDemoService.runAsync()
+     │
+     ├─ Spring proxy submits runAsync() to thread pool
+     ├─ Controller returns HTTP 202 IMMEDIATELY  ← watch the logs: response before task finishes
+     └─ AsyncDemoService.runAsync() finishes ~2s later on task-N thread
+```
+
+> 💡 `@EnableAsync` and `@EnableScheduling` are enabled on `ExecutionFlowConfig`.
+> 💡 `@Async` self-calls are silently ignored — the method **must** be called through a Spring proxy (i.e., from a different class).
 
 ---
 
@@ -233,8 +261,8 @@ Browser Response
 | ✅ Done | **ArgumentResolver** | Added — `resolver/RequestInfoArgumentResolver.java` |
 | ✅ Done | **MessageConverter** | Added — `config/LoggingMessageConverter.java` |
 | ✅ Done | **Custom Validator** | Added — `validation/DepartmentValidator.java` + `@InitBinder` in `UserController` |
-| 🟡 Medium | **Event Publisher + Listener** | Clean decoupling for side effects |
-| 🟡 Medium | **@Async + @Scheduled** | Background processing patterns |
+| ✅ Done | **Event Publisher + Listener** | Added — `event/UserEventListener.java`, `UserProcessedEvent.java` |
+| ✅ Done | **@Async + @Scheduled** | Added — `event/AsyncDemoService.java`, `ScheduledDemoTask.java` |
 | 🟢 Low | **Spring Security** | When auth is required |
 | ✅ Done | **Bean Lifecycle** | Added — `lifecycle/BeanLifecycleDemoBean.java`, `FlowBeanPostProcessor`, `FlowBeanFactoryPostProcessor` |
 | ✅ Done | **Startup Layer** | Added — `startup/StartupApplicationRunner.java`, `StartupEnvironmentPostProcessor.java`, `StartupInfoStore.java` |
