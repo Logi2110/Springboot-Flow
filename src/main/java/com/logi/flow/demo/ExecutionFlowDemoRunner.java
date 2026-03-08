@@ -1,5 +1,7 @@
 package com.logi.flow.demo;
 
+import com.logi.flow.startup.StartupInfoStore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.boot.CommandLineRunner;
 import org.slf4j.Logger;
@@ -13,6 +15,9 @@ import org.slf4j.LoggerFactory;
 public class ExecutionFlowDemoRunner implements CommandLineRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(ExecutionFlowDemoRunner.class);
+
+    @Autowired
+    private StartupInfoStore startupInfoStore;
 
     @Override
     public void run(String... args) throws Exception {
@@ -41,7 +46,12 @@ public class ExecutionFlowDemoRunner implements CommandLineRunner {
         logger.info("🌟 5. Exception demo:");
         logger.info("🌟    curl -X GET http://localhost:8080/api/users/error-demo");
         logger.info("🌟");
+        logger.info("🌟 6. Startup + Bean Lifecycle info (Flow 5):");
+        logger.info("🌟    curl -X GET http://localhost:8080/api/users/startup-info");
+        logger.info("🌟");
         logger.info("🌟 Watch the console logs to see the complete execution flow!");
         logger.info("🌟 ===============================================");
+
+        startupInfoStore.addEvent("🌟 [8] CommandLineRunner.run() — ExecutionFlowDemoRunner executed (same phase as ApplicationRunner)");
     }
 }

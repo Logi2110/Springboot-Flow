@@ -283,4 +283,144 @@
       </root>
     </mxGraphModel>
   </diagram>
+  <diagram id="startup-lifecycle" name="Startup Lifecycle (Layers 6 + 8)">
+    <mxGraphModel dx="1200" dy="900" grid="0" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="1500" math="0" shadow="0" background="#000000">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Spring Boot -- Startup Lifecycle (Layers 6 &amp; 8)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#00E7FF;fontStyle=1;fontSize=22;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="230" y="18" width="580" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leg-title" value="Layers" style="text;html=1;align=left;fontColor=#FFFFFF;fontStyle=1;fontSize=13;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="20" y="70" width="80" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="leg1" value="App Entry / Ready" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;fontColor=#00E7FF;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="100" width="165" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2" value="Environment / Config" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;fontColor=#F7EB07;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="132" width="165" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3" value="BeanFactoryPostProcessor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;fontColor=#1B6EFF;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="164" width="165" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg4" value="BeanPostProcessor / DI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;fontColor=#BC13FE;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="196" width="165" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg5" value="@PostConstruct" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;fontColor=#FF8C00;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="228" width="165" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg6" value="Runner / Business Logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;fontColor=#39FF14;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="260" width="165" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="leg7" value="@PreDestroy / Shutdown" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF007F;fontColor=#FF007F;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="292" width="165" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- n1: SpringApplication.run() -->
+        <mxCell id="n1" value="[1] SpringApplication.run() — bootstrap entry point" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="330" y="70" width="400" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="postProcessEnvironment" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n1" target="n2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- n2: EnvironmentPostProcessor -->
+        <mxCell id="n2" value="[2] EnvironmentPostProcessor - injects app.startup.timestamp (BEFORE context, no beans)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="330" y="174" width="400" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="postProcessBeanFactory" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n2" target="n3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- n3: BeanFactoryPostProcessor -->
+        <mxCell id="n3" value="[3] BeanFactoryPostProcessor - inspects BeanDefinitions (FlowBeanFactoryPostProcessor)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="330" y="278" width="400" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="instantiate + inject" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n3" target="n4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- n4: Bean Constructors + DI -->
+        <mxCell id="n4" value="[4] Bean Constructors + DI — Spring instantiates all singleton beans" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="330" y="382" width="400" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="postProcessBeforeInit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n4" target="n5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- n5: BeanPostProcessor.beforeInit -->
+        <mxCell id="n5" value="[5] BeanPostProcessor.beforeInit - FlowBeanPostProcessor wraps each bean" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="330" y="486" width="400" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="@PostConstruct" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n5" target="n6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- n6: @PostConstruct -->
+        <mxCell id="n6" value="[6] @PostConstruct - StartupInfoStore collects bean counts / BeanLifecycleDemoBean.init()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="330" y="590" width="400" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="postProcessAfterInit + AOP proxy" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n6" target="n7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- n7: BeanPostProcessor.afterInit -->
+        <mxCell id="n7" value="[7] BeanPostProcessor.afterInit - AOP proxies created (JDK / CGLIB)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="330" y="694" width="400" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="ApplicationRunner.run()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n7" target="n8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- n8: ApplicationRunner -->
+        <mxCell id="n8" value="[8] ApplicationRunner.run() - StartupApplicationRunner (context fully refreshed)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="330" y="798" width="400" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="CommandLineRunner.run()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n8" target="n9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- n9: CommandLineRunner -->
+        <mxCell id="n9" value="[9] CommandLineRunner.run() - ExecutionFlowDemoRunner (same phase, raw String[] args)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="330" y="902" width="400" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="Ready" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n9" target="n10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- n10: Application Ready -->
+        <mxCell id="n10" value="[10] Application Ready — HTTP server accepting requests" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="330" y="1006" width="400" height="54" as="geometry" />
+        </mxCell>
+
+        <!-- n11: @PreDestroy (shutdown) — separate section -->
+        <mxCell id="n11" value="[11] @PreDestroy (on shutdown) - BeanLifecycleDemoBean.cleanup() in reverse order" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF007F;strokeWidth=1.5;fontColor=#FF007F;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="330" y="1150" width="400" height="54" as="geometry" />
+        </mxCell>
+
+        <!-- Shutdown dashed arrow: n10 → n11 -->
+        <mxCell id="eshutdown" value="context.close() / SIGTERM" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#FF007F;strokeWidth=1.5;fontColor=#FF007F;fontStyle=0;fontSize=11;shadow=0;dashed=1;dashPattern=8 4;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n10" target="n11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Flow 5 callout box -->
+        <mxCell id="callout" value="📋 GET /api/users/startup-info (Flow 5)&#xa;Returns startupSequence JSON array&#xa;populated by all hooks above" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=12;shadow=0;dashed=1;dashPattern=8 4;" vertex="1" parent="1">
+          <mxGeometry x="768" y="590" width="255" height="54" as="geometry" />
+        </mxCell>
+
+        <!-- Callout arrow from n6 to callout -->
+        <mxCell id="ecallout" value="Flow 5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n6" target="callout">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Side label -->
+        <mxCell id="lbl-startup" value="STARTUP SEQUENCE (down)" style="text;html=1;align=center;verticalAlign=middle;fontColor=#00E7FF;fontStyle=1;fontSize=13;rotation=-90;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="146" y="610" width="200" height="30" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
 </mxfile>

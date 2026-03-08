@@ -1,5 +1,6 @@
 package com.logi.flow.lifecycle;
 
+import com.logi.flow.startup.StartupInfoStore;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
@@ -31,20 +32,24 @@ public class BeanLifecycleDemoBean {
 
     private static final Logger logger = LoggerFactory.getLogger(BeanLifecycleDemoBean.class);
 
+    private final StartupInfoStore startupInfoStore;
+
     @Value("${spring.application.name:flow}")
     private String applicationName;
 
     @Value("${app.startup.timestamp:N/A}")
     private String startupTimestamp;
 
-    // Step 1 — constructor runs first. Injected fields are NOT yet available here.
-    public BeanLifecycleDemoBean() {
-        logger.info("🌱 BEAN LIFECYCLE - [1] Constructor: BeanLifecycleDemoBean() — fields not injected yet");
+    // Step 1 — constructor runs first. @Value fields are NOT yet injected here.
+    public BeanLifecycleDemoBean(StartupInfoStore startupInfoStore) {
+        this.startupInfoStore = startupInfoStore;
+        logger.info("🌱 BEAN LIFECYCLE - [1] Constructor: BeanLifecycleDemoBean() — @Value fields not injected yet");
     }
 
     // Step 4 — all injected fields are populated; safe to do initialization work.
     @PostConstruct
     public void init() {
+        startupInfoStore.addEvent("🌱 [4] BeanLifecycleDemoBean.@PostConstruct — init() called, all injected fields available");
         logger.info("🌱 BEAN LIFECYCLE - [4] @PostConstruct: init() called");
         logger.info("🌱 BEAN LIFECYCLE -     Application : {}", applicationName);
         logger.info("🌱 BEAN LIFECYCLE -     Started at  : {}", startupTimestamp);
@@ -54,6 +59,7 @@ public class BeanLifecycleDemoBean {
     // Step 7 — called when the application context is shutting down.
     @PreDestroy
     public void cleanup() {
+        startupInfoStore.addEvent("💀 BeanLifecycleDemoBean.@PreDestroy — cleanup() called on context shutdown");
         logger.info("🌱 BEAN LIFECYCLE - [7] @PreDestroy: cleanup() called");
         logger.info("🌱 BEAN LIFECYCLE -     Use @PreDestroy to: close connections, flush buffers, release resources");
     }

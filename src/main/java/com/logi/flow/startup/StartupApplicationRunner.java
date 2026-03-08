@@ -25,9 +25,11 @@ public class StartupApplicationRunner implements ApplicationRunner {
     private static final Logger logger = LoggerFactory.getLogger(StartupApplicationRunner.class);
 
     private final Environment environment;
+    private final StartupInfoStore startupInfoStore;
 
-    public StartupApplicationRunner(Environment environment) {
+    public StartupApplicationRunner(Environment environment, StartupInfoStore startupInfoStore) {
         this.environment = environment;
+        this.startupInfoStore = startupInfoStore;
     }
 
     @Override
@@ -66,5 +68,7 @@ public class StartupApplicationRunner implements ApplicationRunner {
         logger.info("🚀       Both run after context is fully refreshed.");
         logger.info("🚀       EnvironmentPostProcessor ran BEFORE context refresh.");
         logger.info("🚀 ======================================================");
+
+        startupInfoStore.addEvent("🚀 [7] ApplicationRunner.run() — StartupApplicationRunner executed (context fully refreshed)");
     }
 }

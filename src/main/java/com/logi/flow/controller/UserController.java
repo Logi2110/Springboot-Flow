@@ -1,10 +1,12 @@
 package com.logi.flow.controller;
 
+import com.logi.flow.dto.StartupInfoResponse;
 import com.logi.flow.dto.UserRequest;
 import com.logi.flow.dto.UserResponse;
 import com.logi.flow.resolver.InjectRequestInfo;
 import com.logi.flow.resolver.RequestInfo;
 import com.logi.flow.service.UserService;
+import com.logi.flow.startup.StartupInfoStore;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,7 @@ import java.util.Map;
  *                                          + @Valid + Service + ResponseBodyAdvice
  * Flow 3 - GET /{id}       : Programmatic exception — manual throw → IllegalArgumentException handler
  * Flow 4 - GET /error-demo : Unhandled exception — RuntimeException → global exception handler
+ * Flow 5 - GET /startup-info : Startup + Bean Lifecycle events collected during boot
  */
 @RestController
 @RequestMapping("/api/users")
@@ -37,6 +40,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private StartupInfoStore startupInfoStore;
 
     /**
      * VALIDATION LAYER — DataBinder
@@ -115,5 +121,22 @@ public class UserController {
     public ResponseEntity<String> errorDemo() {
         logger.info("📋 3. CONTROLLER - EXECUTING: errorDemo()");
         throw new RuntimeException("This is a demo exception to show error handling flow");
+    }
+
+    /**
+     * FLOW 5: Startup and Bean Lifecycle Layer demo
+     * Returns real-time startup events captured during boot by:
+     *   EnvironmentPostProcessor → BeanFactoryPostProcessor → BeanPostProcessor
+     *   → @PostConstruct → ApplicationRunner → CommandLineRunner
+     *
+     * @param requestInfo  Resolved by RequestInfoArgumentResolver
+     */
+    @GetMapping("/startup-info")
+    public ResponseEntity<StartupInfoResponse> getStartupInfo(@InjectRequestInfo RequestInfo requestInfo) {
+        logger.info("📋 3. CONTROLLER - EXECUTING: getStartupInfo() requestInfo={}", requestInfo);
+        StartupInfoResponse response = startupInfoStore.toResponse();
+        logger.info("📋 5. CONTROLLER - RETURNING startup info: {} flow beans, {} startup events",
+                response.getFlowBeanCount(), response.getStartupSequence().size());
+        return ResponseEntity.ok(response);
     }
 }

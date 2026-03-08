@@ -13,7 +13,7 @@
   "item": [
     {
       "name": "Execution Flows",
-      "description": "4 endpoints — each demonstrates a distinct execution path through the layer stack.",
+      "description": "5 endpoints — each demonstrates a distinct execution path through the layer stack.",
       "item": [
         {
           "name": "Flow 1 — Minimal (Controller Only)",
@@ -152,6 +152,49 @@
                   "    pm.expect(json.error).to.exist;",
                   "    pm.expect(json.message).to.exist;",
                   "    pm.expect(json.timestamp).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 5 — Startup + Bean Lifecycle Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/startup-info",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "startup-info"]
+            },
+            "description": "FLOW 5 — Returns startup and bean lifecycle events captured during boot.\n\nStack: Filter → Interceptor → AOP → Controller → StartupInfoStore.toResponse() → AOP → Interceptor → Filter\n\nThe 'startupSequence' array in the response shows every lifecycle hook that fired in order:\n  [1] EnvironmentPostProcessor  — BEFORE context, injects app.startup.timestamp\n  [2] BeanFactoryPostProcessor  — inspects BeanDefinitions before instantiation\n  [3] BeanPostProcessor.before  — wraps each bean before @PostConstruct\n  [4] @PostConstruct             — StartupInfoStore + BeanLifecycleDemoBean init\n  [5] BeanPostProcessor.after   — AOP proxies (JDK / CGLIB) created here\n  [7] ApplicationRunner.run()   — StartupApplicationRunner, context fully refreshed\n  [8] CommandLineRunner.run()   — ExecutionFlowDemoRunner, same phase\n\nKey classes: StartupInfoStore, StartupApplicationRunner, StartupEnvironmentPostProcessor,\n             FlowBeanFactoryPostProcessor, FlowBeanPostProcessor, BeanLifecycleDemoBean"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"Response has startup metadata\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.applicationName).to.exist;",
+                  "    pm.expect(json.startupTimestamp).to.exist;",
+                  "    pm.expect(json.totalBeanCount).to.be.a('number').and.greaterThan(0);",
+                  "    pm.expect(json.flowBeanCount).to.be.a('number').and.greaterThan(0);",
+                  "    pm.expect(json.flowBeanNames).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"startupSequence captures lifecycle hooks\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.startupSequence).to.be.an('array').and.have.length.greaterThan(0);",
+                  "    const seq = json.startupSequence.join(' ');",
+                  "    pm.expect(seq).to.include('EnvironmentPostProcessor');",
+                  "    pm.expect(seq).to.include('BeanFactoryPostProcessor');",
+                  "    pm.expect(seq).to.include('ApplicationRunner');",
                   "});"
                 ],
                 "type": "text/javascript"

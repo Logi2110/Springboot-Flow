@@ -8,6 +8,7 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.stereotype.Component;
 
+import com.logi.flow.startup.StartupInfoStore;
 import java.util.Arrays;
 
 /**
@@ -71,6 +72,10 @@ public class FlowBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
         logger.info("🏭 BEAN FACTORY POST-PROCESSOR - Flow-package bean definitions found: {}", flowBeanCount);
         logger.info("🏭 BEAN FACTORY POST-PROCESSOR - NOTE: at this point NO beans have been instantiated yet");
+
+        // Record startup event (static — no Spring beans exist yet)
+        StartupInfoStore.recordEvent("🏭 [2] BeanFactoryPostProcessor — inspected " + flowBeanCount
+                + " flow beans out of " + beanFactory.getBeanDefinitionCount() + " total bean definitions");
     }
 
     private String simpleName(String fullClassName) {

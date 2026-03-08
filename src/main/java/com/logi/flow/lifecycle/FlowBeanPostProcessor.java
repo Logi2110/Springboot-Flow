@@ -2,9 +2,12 @@ package com.logi.flow.lifecycle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.logi.flow.startup.StartupInfoStore;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Bean Lifecycle Layer — BeanPostProcessor
@@ -30,6 +33,10 @@ public class FlowBeanPostProcessor implements BeanPostProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(FlowBeanPostProcessor.class);
 
+    // Record startup events only once (first flow bean through each phase)
+    private static final AtomicBoolean BPP_BEFORE_LOGGED = new AtomicBoolean(false);
+    private static final AtomicBoolean BPP_AFTER_LOGGED  = new AtomicBoolean(false);
+
     /**
      * Called BEFORE the bean's init method (@PostConstruct / afterPropertiesSet).
      * At this point, dependency injection has already completed.
@@ -37,6 +44,10 @@ public class FlowBeanPostProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         if (isFlowBean(beanName)) {
+            if (BPP_BEFORE_LOGGED.compareAndSet(false, true)) {
+                StartupInfoStore.recordEvent(
+                        "🔬 [3] BeanPostProcessor.beforeInit — active for all flow beans (first: '" + beanName + "')");
+            }
             logger.info("🔬 BEAN POST-PROCESSOR - [3] beforeInit : '{}' ({})",
                     beanName, bean.getClass().getSimpleName());
         }
@@ -51,6 +62,10 @@ public class FlowBeanPostProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (isFlowBean(beanName)) {
+            if (BPP_AFTER_LOGGED.compareAndSet(false, true)) {
+                StartupInfoStore.recordEvent(
+                        "🔬 [5] BeanPostProcessor.afterInit — AOP proxies created for eligible beans (first: '" + beanName + "')");
+            }
             logger.info("🔬 BEAN POST-PROCESSOR - [5] afterInit  : '{}' — ready in context ({})",
                     beanName, bean.getClass().getSimpleName());
         }

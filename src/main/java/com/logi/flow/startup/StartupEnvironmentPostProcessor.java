@@ -41,5 +41,9 @@ public class StartupEnvironmentPostProcessor implements EnvironmentPostProcessor
                 environment.getActiveProfiles().length > 0
                         ? environment.getActiveProfiles()
                         : new String[]{"(default)"}));
+
+        // Captured into startup event sequence (static call — no Spring context needed)
+        StartupInfoStore.recordEvent(
+                "🌱 [1] EnvironmentPostProcessor — injected 'app.startup.timestamp' into Environment (BEFORE context refresh)");
     }
 }

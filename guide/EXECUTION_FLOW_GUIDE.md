@@ -56,6 +56,7 @@ When a request comes to your Spring Boot application, here's the **exact order**
   - `POST /api/users` — Flow 2: full with `@Valid` + service
   - `GET /api/users/{id}` — Flow 3: programmatic guard + service
   - `GET /api/users/error-demo` — Flow 4: throws RuntimeException
+  - `GET /api/users/startup-info` — Flow 5: startup + bean lifecycle events
 
 ### 5. **Service Layer Execution**
 ```
@@ -177,6 +178,28 @@ curl -X GET http://localhost:8080/api/users/-1
 curl -X GET http://localhost:8080/api/users/error-demo
 ```
 **Stack**: Filter → Interceptor → AOP → Controller → `RuntimeException` → AOP `@AfterThrowing` → `GlobalExceptionHandler` → Interceptor `afterCompletion` → Filter
+
+---
+
+### Flow 5 — Startup + Bean Lifecycle Info
+```bash
+curl -X GET http://localhost:8080/api/users/startup-info
+```
+**Stack**: Filter → Interceptor → AOP → Controller → `StartupInfoStore.toResponse()` → AOP → Interceptor → Filter
+
+**Returns**: JSON with `startupSequence` — a live list of events captured by every lifecycle hook during boot:
+1. `🌱 [1] EnvironmentPostProcessor` — runs before context refresh, injects `app.startup.timestamp`
+2. `🏭 [2] BeanFactoryPostProcessor` — inspects bean definitions before any bean is instantiated
+3. `🔬 [3] BeanPostProcessor.beforeInit` — wraps every bean before `@PostConstruct`
+4. `📦 [4] StartupInfoStore.@PostConstruct` — collects flow bean counts after DI is complete
+5. `🌱 [4] BeanLifecycleDemoBean.@PostConstruct` — fires on the demo bean's own init phase
+6. `🔬 [5] BeanPostProcessor.afterInit` — AOP proxies are created here
+7. `🚀 [7] ApplicationRunner.run()` — context fully refreshed, `StartupApplicationRunner` executes
+8. `🌟 [8] CommandLineRunner.run()` — same phase as ApplicationRunner, `ExecutionFlowDemoRunner` executes
+
+**Key files**: `startup/StartupInfoStore.java`, `startup/StartupApplicationRunner.java`,
+`startup/StartupEnvironmentPostProcessor.java`, `lifecycle/FlowBeanFactoryPostProcessor.java`,
+`lifecycle/FlowBeanPostProcessor.java`, `lifecycle/BeanLifecycleDemoBean.java`
 
 ## 📊 Execution Flow Visualization
 

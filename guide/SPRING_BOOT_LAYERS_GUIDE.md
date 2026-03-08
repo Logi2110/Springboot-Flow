@@ -237,7 +237,7 @@ Browser Response
 | 🟡 Medium | **@Async + @Scheduled** | Background processing patterns |
 | 🟢 Low | **Spring Security** | When auth is required |
 | ✅ Done | **Bean Lifecycle** | Added — `lifecycle/BeanLifecycleDemoBean.java`, `FlowBeanPostProcessor`, `FlowBeanFactoryPostProcessor` |
-| 🟢 Low | **Spring Security** | When auth is required |
+| ✅ Done | **Startup Layer** | Added — `startup/StartupApplicationRunner.java`, `StartupEnvironmentPostProcessor.java`, `StartupInfoStore.java` |
 
 
 ## Full Flow Sequence (source of truth flow)
