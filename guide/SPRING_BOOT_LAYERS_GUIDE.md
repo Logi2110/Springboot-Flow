@@ -19,6 +19,9 @@
 | **CommandLineRunner** | `demo/ExecutionFlowDemoRunner.java` | Logs demo curl commands at startup (raw `String[]` args) |
 | **ApplicationRunner** | `startup/StartupApplicationRunner.java` | Logs env info at startup via structured `ApplicationArguments` |
 | **EnvironmentPostProcessor** | `startup/StartupEnvironmentPostProcessor.java` | Injects `app.startup.timestamp` property **before** context refresh |
+| **@PostConstruct / @PreDestroy** | `lifecycle/BeanLifecycleDemoBean.java` | Init / cleanup hooks on a single bean after injection / before destruction |
+| **BeanPostProcessor** | `lifecycle/FlowBeanPostProcessor.java` | Intercepts every bean before/after its init method (used by AOP, `@Async`, etc.) |
+| **BeanFactoryPostProcessor** | `lifecycle/FlowBeanFactoryPostProcessor.java` | Inspects all bean definitions before any instance is created |
 
 ---
 
@@ -76,13 +79,28 @@
 
 ---
 
-### 6. Bean Lifecycle Layer
+### ~~6. Bean Lifecycle Layer~~ ✅ Added
 
-| Layer | Annotation | When Used |
+| Layer | Location | When Used |
 |---|---|---|
-| **Init / Destroy** | `@PostConstruct`, `@PreDestroy` | Setup/cleanup on bean creation or shutdown |
-| **BeanPostProcessor** | `BeanPostProcessor` | Intercept and modify every Spring bean after creation |
-| **BeanFactoryPostProcessor** | `BeanFactoryPostProcessor` | Modify bean definitions before instantiation |
+| **@PostConstruct / @PreDestroy** | `lifecycle/BeanLifecycleDemoBean.java` | Init/cleanup on one bean after injection / before context shutdown |
+| **BeanPostProcessor** | `lifecycle/FlowBeanPostProcessor.java` | Hook called before+after init for **every** bean — how Spring builds AOP proxies |
+| **BeanFactoryPostProcessor** | `lifecycle/FlowBeanFactoryPostProcessor.java` | Inspects/modifies bean **definitions** before any instance is created |
+
+**Lifecycle order** (earliest → latest within context startup):
+```
+🏭 BeanFactoryPostProcessor.postProcessBeanFactory()      ← definitions only, no bean instances yet
+         ↓  [Spring instantiates beans — constructors run]
+         ↓
+🔬 BeanPostProcessor.postProcessBeforeInitialization()    ← before @PostConstruct
+🌱 @PostConstruct                                          ← BeanLifecycleDemoBean.init()
+🔬 BeanPostProcessor.postProcessAfterInitialization()     ← after @PostConstruct (AOP proxy created here)
+         ↓  [Bean ready in context — serves requests]
+         ↓
+🌱 @PreDestroy                                             ← BeanLifecycleDemoBean.cleanup() on shutdown
+```
+
+> 💡 `BeanPostProcessor` is the internal mechanism Spring uses for `@Autowired`, AOP proxies, `@Async`, and `@Scheduled` — your custom one runs alongside all of those.
 
 ---
 
@@ -218,7 +236,8 @@ Browser Response
 | 🟡 Medium | **Event Publisher + Listener** | Clean decoupling for side effects |
 | 🟡 Medium | **@Async + @Scheduled** | Background processing patterns |
 | 🟢 Low | **Spring Security** | When auth is required |
-| 🟢 Low | **BeanPostProcessor** | Advanced framework-level customisation |
+| ✅ Done | **Bean Lifecycle** | Added — `lifecycle/BeanLifecycleDemoBean.java`, `FlowBeanPostProcessor`, `FlowBeanFactoryPostProcessor` |
+| 🟢 Low | **Spring Security** | When auth is required |
 
 
 ## Full Flow Sequence (source of truth flow)
