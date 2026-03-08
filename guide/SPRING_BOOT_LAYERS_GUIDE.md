@@ -10,6 +10,10 @@
 | **Controller** | `controller/` | HTTP request handling |
 | **Service** | `service/` | Business logic |
 | **Exception Handler** | `exception/` | `@ControllerAdvice` / `@ExceptionHandler` |
+| **RequestBodyAdvice** | `advice/LoggingRequestBodyAdvice.java` | Pre-process inbound JSON before controller |
+| **ResponseBodyAdvice** | `advice/LoggingResponseBodyAdvice.java` | Post-process outbound JSON before serialization |
+| **ArgumentResolver** | `resolver/RequestInfoArgumentResolver.java` | Inject custom `RequestInfo` via `@InjectRequestInfo` |
+| **MessageConverter** | `config/LoggingMessageConverter.java` | Custom Jackson converter with read/write logging |
 
 ---
 
@@ -26,14 +30,14 @@
 
 ---
 
-### 2. Request / Response Processing Layer
+### ~~2. Request / Response Processing Layer~~ ✅ Added
 
-| Layer | Interface / Annotation | When Used |
+| Layer | Location | When Used |
 |---|---|---|
-| **RequestBodyAdvice** | `RequestBodyAdvice` | Pre-process all inbound JSON bodies (decryption, logging) |
-| **ResponseBodyAdvice** | `ResponseBodyAdvice` | Post-process all outbound JSON (wrapping responses, encryption) |
-| **ArgumentResolver** | `HandlerMethodArgumentResolver` | Inject custom objects into controller method parameters |
-| **MessageConverter** | `HttpMessageConverter` | Customise JSON/XML serialisation globally |
+| **RequestBodyAdvice** | `advice/LoggingRequestBodyAdvice.java` | Pre-process all inbound JSON bodies (decryption, logging) |
+| **ResponseBodyAdvice** | `advice/LoggingResponseBodyAdvice.java` | Post-process all outbound JSON (wrapping responses, encryption) |
+| **ArgumentResolver** | `resolver/RequestInfoArgumentResolver.java` | Injects `RequestInfo` into controller methods via `@InjectRequestInfo` |
+| **MessageConverter** | `config/LoggingMessageConverter.java` | Customise JSON/XML serialisation globally |
 
 ---
 
@@ -130,10 +134,13 @@ Browser Request
 [HandlerInterceptor.preHandle]   ← Spring Interceptor ✅
      │
      ▼
-[ArgumentResolver]               ← Resolve method params (Layer 2, missing)
+[ArgumentResolver]               ← Resolve method params ✅ (RequestInfoArgumentResolver)
      │
      ▼
-[RequestBodyAdvice]              ← Pre-process request body (Layer 2, missing)
+[RequestBodyAdvice]              ← Pre-process request body ✅ (LoggingRequestBodyAdvice)
+     │
+     ▼
+[MessageConverter.read()]        ← Deserialize JSON ✅ (LoggingMessageConverter)
      │
      ▼
 [AOP @Before / @Around]          ← AOP Aspect ✅
@@ -151,7 +158,10 @@ Browser Request
 [AOP @AfterReturning]            ← AOP Aspect ✅
      │
      ▼
-[ResponseBodyAdvice]             ← Post-process response (Layer 2, missing)
+[ResponseBodyAdvice]             ← Post-process response ✅ (LoggingResponseBodyAdvice)
+     │
+     ▼
+[MessageConverter.write()]       ← Serialize JSON ✅ (LoggingMessageConverter)
      │
      ▼
 [HandlerInterceptor.postHandle]  ← Interceptor ✅
@@ -175,10 +185,37 @@ Browser Response
 | Priority | Layer | Reason |
 |---|---|---|
 | 🔴 High | **Repository + Entity + Transaction** | Foundation of every real app |
-| 🔴 High | **ResponseBodyAdvice** | Very common for standard API response wrapping |
+| ✅ Done | **ResponseBodyAdvice** | Added — `advice/LoggingResponseBodyAdvice.java` |
+| ✅ Done | **RequestBodyAdvice** | Added — `advice/LoggingRequestBodyAdvice.java` |
+| ✅ Done | **ArgumentResolver** | Added — `resolver/RequestInfoArgumentResolver.java` |
+| ✅ Done | **MessageConverter** | Added — `config/LoggingMessageConverter.java` |
 | 🟡 Medium | **Custom Validator** | Frequently needed for business-specific rules |
 | 🟡 Medium | **Event Publisher + Listener** | Clean decoupling for side effects |
 | 🟡 Medium | **@Async + @Scheduled** | Background processing patterns |
 | 🟢 Low | **Spring Security** | When auth is required |
 | 🟢 Low | **BeanPostProcessor** | Advanced framework-level customisation |
-| 🟢 Low | **ArgumentResolver** | Custom parameter injection patterns |
+
+
+## Full Flow Sequence (source of truth flow)
+
+🔥 1.  FILTER - BEFORE
+🚀 2.  INTERCEPTOR - preHandle
+🔑 2a. ARGUMENT RESOLVER - injecting RequestInfo        ← new
+📨 2b. REQUEST BODY ADVICE - beforeBodyRead             ← new
+🔄 2c. MESSAGE CONVERTER - read (deserializing)         ← new
+📨 2d. REQUEST BODY ADVICE - afterBodyRead              ← new
+🎯 3a. AOP - CONTROLLER BEFORE (@Around)
+🎯 3b. AOP - @Before
+📋 3.  CONTROLLER - EXECUTING: processUser()
+🔧 4a. AOP - SERVICE BEFORE
+🔧 4.  SERVICE - EXECUTING: processUser()
+🔧 4b. AOP - SERVICE AFTER
+🎯 5a. AOP - CONTROLLER AFTER
+🎯 5b. AOP - @After
+🎯 5c. AOP - @AfterReturning
+📋 5.  CONTROLLER - RETURNING
+📤 5d. RESPONSE BODY ADVICE - beforeBodyWrite           ← new
+🔄 5e. MESSAGE CONVERTER - write (serializing)          ← new
+🚀 6.  INTERCEPTOR - postHandle
+🚀 7.  INTERCEPTOR - afterCompletion
+🔥 8.  FILTER - AFTER

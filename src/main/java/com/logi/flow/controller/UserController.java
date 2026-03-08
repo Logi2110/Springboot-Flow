@@ -2,6 +2,8 @@ package com.logi.flow.controller;
 
 import com.logi.flow.dto.UserRequest;
 import com.logi.flow.dto.UserResponse;
+import com.logi.flow.resolver.InjectRequestInfo;
+import com.logi.flow.resolver.RequestInfo;
 import com.logi.flow.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -17,7 +19,8 @@ import java.util.Map;
  * Controller demonstrating different execution flow scenarios.
  *
  * Flow 1 - /hello          : Minimal flow — Controller only, no validation, no service
- * Flow 2 - POST /          : Full flow  — Bean validation (@Valid) → Service layer
+ * Flow 2 - POST /          : Full flow   — ArgumentResolver + RequestBodyAdvice + MessageConverter
+ *                                          + @Valid + Service + ResponseBodyAdvice
  * Flow 3 - GET /{id}       : Programmatic exception — manual throw → IllegalArgumentException handler
  * Flow 4 - GET /error-demo : Unhandled exception — RuntimeException → global exception handler
  */
@@ -49,12 +52,18 @@ public class UserController {
     }
 
     /**
-     * FLOW 2: Full flow with bean validation and service layer
-     * Filter → Interceptor → AOP → Controller → @Valid → Service
+     * FLOW 2: Full flow — all Layer 2 components active
+     * Filter → Interceptor → ArgumentResolver → RequestBodyAdvice + MessageConverter.read
+     *   → AOP → Controller → @Valid → Service → AOP → ResponseBodyAdvice + MessageConverter.write
+     *   → Interceptor → Filter
+     *
+     * @param request      Resolved by @RequestBody + RequestBodyAdvice + MessageConverter
+     * @param requestInfo  Resolved by RequestInfoArgumentResolver (triggered by @InjectRequestInfo)
      */
     @PostMapping
-    public ResponseEntity<UserResponse> processUser(@Valid @RequestBody UserRequest request) {
-        logger.info("📋 3. CONTROLLER - EXECUTING: processUser() with request: {}", request);
+    public ResponseEntity<UserResponse> processUser(@Valid @RequestBody UserRequest request,
+                                                    @InjectRequestInfo RequestInfo requestInfo) {
+        logger.info("📋 3. CONTROLLER - EXECUTING: processUser() requestInfo={}, request={}", requestInfo, request);
 
         UserResponse response = userService.processUser(request);
 
