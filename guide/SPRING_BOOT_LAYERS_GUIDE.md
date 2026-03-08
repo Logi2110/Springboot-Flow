@@ -16,6 +16,9 @@
 | **MessageConverter** | `config/LoggingMessageConverter.java` | Custom Jackson converter with read/write logging |
 | **Custom Validator** | `validation/DepartmentValidator.java` | `@ValidDepartment` — rejects unknown department values |
 | **DataBinder** | `controller/UserController.java` `@InitBinder` | Trims whitespace from all String fields before `@Valid` |
+| **CommandLineRunner** | `demo/ExecutionFlowDemoRunner.java` | Logs demo curl commands at startup (raw `String[]` args) |
+| **ApplicationRunner** | `startup/StartupApplicationRunner.java` | Logs env info at startup via structured `ApplicationArguments` |
+| **EnvironmentPostProcessor** | `startup/StartupEnvironmentPostProcessor.java` | Injects `app.startup.timestamp` property **before** context refresh |
 
 ---
 
@@ -93,14 +96,25 @@
 
 ---
 
-### 8. Startup Layer
+### ~~8. Startup Layer~~ ✅ Added
 
-| Layer | Interface | When Used |
+| Layer | Location | When Used |
 |---|---|---|
-| **ApplicationRunner** | `ApplicationRunner` | Code that runs once at startup with args |
-| **EnvironmentPostProcessor** | `EnvironmentPostProcessor` | Modify environment properties before context refresh |
+| **CommandLineRunner** | `demo/ExecutionFlowDemoRunner.java` | Already present — logs demo curl commands; receives raw `String[]` args |
+| **ApplicationRunner** | `startup/StartupApplicationRunner.java` | Logs env / arg info at startup; receives structured `ApplicationArguments` |
+| **EnvironmentPostProcessor** | `startup/StartupEnvironmentPostProcessor.java` | Injects `app.startup.timestamp` **before** context refresh — registered via `META-INF/spring.factories` |
 
-> 💡 This project already uses `CommandLineRunner` via `ExecutionFlowDemoRunner.java`
+**Startup order** (earliest → latest):
+```
+🌱 EnvironmentPostProcessor.postProcessEnvironment()   ← BEFORE context refresh (no beans yet)
+     │
+     ▼  [ApplicationContext created & refreshed]
+     │
+🚀 ApplicationRunner.run(ApplicationArguments)         ← AFTER context refresh
+🌟 CommandLineRunner.run(String...)                    ← AFTER context refresh (same phase)
+```
+
+> 💡 `EnvironmentPostProcessor` cannot be a `@Component` — it must be registered in `META-INF/spring.factories` because component scanning hasn't run yet.
 
 ---
 
