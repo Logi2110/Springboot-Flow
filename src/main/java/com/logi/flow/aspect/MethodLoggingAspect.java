@@ -19,8 +19,8 @@ public class MethodLoggingAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodLoggingAspect.class);
 
-    // Pointcut for all controller methods
-    @Pointcut("execution(* com.logi.flow.controller..*(..))")
+    // Pointcut for all controller methods — excludes @InitBinder methods
+    @Pointcut("execution(* com.logi.flow.controller..*(..)) && !@annotation(org.springframework.web.bind.annotation.InitBinder)")
     public void controllerMethods() {}
 
     // Pointcut for all service methods

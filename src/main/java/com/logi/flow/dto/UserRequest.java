@@ -1,5 +1,6 @@
 package com.logi.flow.dto;
 
+import com.logi.flow.validation.ValidDepartment;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,6 +22,7 @@ public class UserRequest {
     private String email;
     
     @Size(max = 100, message = "Department cannot exceed 100 characters")
+    @ValidDepartment
     private String department;
 
     // Constructors

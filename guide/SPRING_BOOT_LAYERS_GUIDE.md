@@ -14,6 +14,8 @@
 | **ResponseBodyAdvice** | `advice/LoggingResponseBodyAdvice.java` | Post-process outbound JSON before serialization |
 | **ArgumentResolver** | `resolver/RequestInfoArgumentResolver.java` | Inject custom `RequestInfo` via `@InjectRequestInfo` |
 | **MessageConverter** | `config/LoggingMessageConverter.java` | Custom Jackson converter with read/write logging |
+| **Custom Validator** | `validation/DepartmentValidator.java` | `@ValidDepartment` — rejects unknown department values |
+| **DataBinder** | `controller/UserController.java` `@InitBinder` | Trims whitespace from all String fields before `@Valid` |
 
 ---
 
@@ -41,12 +43,12 @@
 
 ---
 
-### 3. Validation Layer
+### ~~3. Validation Layer~~ ✅ Added
 
-| Layer | Interface | When Used |
+| Layer | Location | When Used |
 |---|---|---|
-| **Custom Validator** | `ConstraintValidator` | Custom `@Valid` annotation rules beyond built-in ones |
-| **DataBinder** | `@InitBinder` | Pre-process request data per-controller |
+| **Custom Validator** | `validation/DepartmentValidator.java` | `@ValidDepartment` — checks department is in allowed set |
+| **DataBinder** | `controller/UserController.java` — `@InitBinder` | Trims whitespace from all String fields before binding |
 
 ---
 
@@ -140,6 +142,12 @@ Browser Request
 [MessageConverter.read()]        ← Deserialize JSON ✅ (LoggingMessageConverter)
      │
      ▼
+[@InitBinder]                    ← DataBinder setup ✅ (UserController.initBinder)
+     │
+     ▼
+[@Valid → DepartmentValidator]   ← Bean Validation ✅ (DepartmentValidator.isValid)
+     │
+     ▼
 [ArgumentResolver]               ← Resolve method params ✅ (RequestInfoArgumentResolver)
      │
      ▼
@@ -189,7 +197,7 @@ Browser Response
 | ✅ Done | **RequestBodyAdvice** | Added — `advice/LoggingRequestBodyAdvice.java` |
 | ✅ Done | **ArgumentResolver** | Added — `resolver/RequestInfoArgumentResolver.java` |
 | ✅ Done | **MessageConverter** | Added — `config/LoggingMessageConverter.java` |
-| 🟡 Medium | **Custom Validator** | Frequently needed for business-specific rules |
+| ✅ Done | **Custom Validator** | Added — `validation/DepartmentValidator.java` + `@InitBinder` |
 | 🟡 Medium | **Event Publisher + Listener** | Clean decoupling for side effects |
 | 🟡 Medium | **@Async + @Scheduled** | Background processing patterns |
 | 🟢 Low | **Spring Security** | When auth is required |
@@ -200,11 +208,12 @@ Browser Response
 
 🔥 1.  FILTER - BEFORE
 🚀 2.  INTERCEPTOR - preHandle
-
-📨 2a. REQUEST BODY ADVICE - beforeBodyRead             ← new
-🔄 2b. MESSAGE CONVERTER - read (deserializing)         ← new
-📨 2c. REQUEST BODY ADVICE - afterBodyRead              ← new
-🔑 2d. ARGUMENT RESOLVER - injecting RequestInfo        ← new
+📨 2a. REQUEST BODY ADVICE - beforeBodyRead
+🔄 2b. MESSAGE CONVERTER - read (deserializing)
+📨 2c. REQUEST BODY ADVICE - afterBodyRead
+✂️ 2d. INIT BINDER - initBinder() → StringTrimmerEditor registered      ← Validation Layer
+✅ 2e. @VALID - DepartmentValidator.isValid()                             ← Validation Layer
+🔑 2f. ARGUMENT RESOLVER - injecting RequestInfo
 🎯 3a. AOP - CONTROLLER BEFORE (@Around)
 🎯 3b. AOP - @Before
 📋 3.  CONTROLLER - EXECUTING: processUser()
@@ -215,8 +224,8 @@ Browser Response
 🎯 5a. AOP - @AfterReturning          ← fires 1st (success path only)
 🎯 5b. AOP - @After                   ← fires 2nd (always, success or throw)
 🎯 5c. AOP - CONTROLLER AFTER         ← fires 3rd (@Around regains control)
-📤 5d. RESPONSE BODY ADVICE - beforeBodyWrite           ← new
-🔄 5e. MESSAGE CONVERTER - write (serializing)          ← new
+📤 5d. RESPONSE BODY ADVICE - beforeBodyWrite
+🔄 5e. MESSAGE CONVERTER - write (serializing)
 🚀 6.  INTERCEPTOR - postHandle
 🚀 7.  INTERCEPTOR - afterCompletion
 🔥 8.  FILTER - AFTER

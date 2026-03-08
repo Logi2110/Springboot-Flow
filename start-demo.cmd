@@ -1,5 +1,6 @@
 @echo off
-echo ====================================================
+chcp 65001 >nul
+echo ======================================================
 echo Spring Boot Execution Flow Demo - Startup Script
 echo ====================================================
 echo.
@@ -29,6 +30,6 @@ echo.
 
 REM Run the Spring Boot application
 cd /d "%~dp0"
-mvn clean spring-boot:run
+mvn clean spring-boot:run -Dspring-boot.run.jvmArguments="-Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8"
 
 pause

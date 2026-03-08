@@ -9,9 +9,12 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
 
 import java.util.Map;
 
@@ -34,6 +37,23 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    /**
+     * VALIDATION LAYER — DataBinder
+     * Called by Spring MVC before binding request data to any method parameter in this controller.
+     * Runs after Interceptor.preHandle() and before @Valid bean validation.
+     *
+     * Execution position in Flow 2 (POST /api/users):
+     *   Interceptor.preHandle → ArgumentResolver → MessageConverter.read
+     *     → @InitBinder (trim whitespace) → @Valid → Controller method
+     */
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        logger.info("🔗 VALIDATION - INIT BINDER: Registering StringTrimmerEditor — trimming all String fields");
+        // Trims leading/trailing whitespace from all bound String values.
+        // false = keep empty strings as-is (do not convert to null)
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
+    }
 
     /**
      * FLOW 1: Minimal flow
