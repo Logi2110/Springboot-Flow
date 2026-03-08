@@ -48,7 +48,7 @@
 | Layer | Location | When Used |
 |---|---|---|
 | **Custom Validator** | `validation/DepartmentValidator.java` | `@ValidDepartment` — checks department is in allowed set |
-| **DataBinder** | `controller/UserController.java` — `@InitBinder` | Trims whitespace from all String fields before binding |
+| **DataBinder** | `controller/UserController.java` — `@InitBinder` | Registers `StringTrimmerEditor`; runs before `@Valid` for every request to this controller |
 
 ---
 
@@ -133,22 +133,25 @@ Browser Request
 [HandlerMapping]                 ← Resolve which controller (Layer 9, built-in)
      │
      ▼
-[HandlerInterceptor.preHandle]   ← Spring Interceptor ✅
+[HandlerInterceptor.preHandle]         ← Spring Interceptor ✅
      │
      ▼
-[RequestBodyAdvice]              ← Pre-process request body ✅ (LoggingRequestBodyAdvice)
+[RequestBodyAdvice.beforeBodyRead()]   ← Pre-read hook ✅ (LoggingRequestBodyAdvice)
      │
      ▼
-[MessageConverter.read()]        ← Deserialize JSON ✅ (LoggingMessageConverter)
+[MessageConverter.read()]              ← Deserialize JSON ✅ (LoggingMessageConverter)
      │
      ▼
-[@InitBinder]                    ← DataBinder setup ✅ (UserController.initBinder)
+[RequestBodyAdvice.afterBodyRead()]    ← Post-read hook ✅ (LoggingRequestBodyAdvice)
      │
      ▼
-[@Valid → DepartmentValidator]   ← Bean Validation ✅ (DepartmentValidator.isValid)
+[@InitBinder]                          ← DataBinder setup ✅ (UserController.initBinder)
      │
      ▼
-[ArgumentResolver]               ← Resolve method params ✅ (RequestInfoArgumentResolver)
+[@Valid → DepartmentValidator]         ← Bean Validation ✅ (DepartmentValidator.isValid)
+     │
+     ▼
+[ArgumentResolver]                     ← Resolve method params ✅ (RequestInfoArgumentResolver)
      │
      ▼
 [AOP @Before / @Around]          ← AOP Aspect ✅
@@ -166,10 +169,10 @@ Browser Request
 [AOP @AfterReturning]            ← AOP Aspect ✅
      │
      ▼
-[ResponseBodyAdvice]             ← Post-process response ✅ (LoggingResponseBodyAdvice)
+[ResponseBodyAdvice.beforeBodyWrite()] ← Post-process response ✅ (LoggingResponseBodyAdvice)
      │
      ▼
-[MessageConverter.write()]       ← Serialize JSON ✅ (LoggingMessageConverter)
+[MessageConverter.write()]             ← Serialize JSON ✅ (LoggingMessageConverter)
      │
      ▼
 [HandlerInterceptor.postHandle]  ← Interceptor ✅
@@ -197,7 +200,7 @@ Browser Response
 | ✅ Done | **RequestBodyAdvice** | Added — `advice/LoggingRequestBodyAdvice.java` |
 | ✅ Done | **ArgumentResolver** | Added — `resolver/RequestInfoArgumentResolver.java` |
 | ✅ Done | **MessageConverter** | Added — `config/LoggingMessageConverter.java` |
-| ✅ Done | **Custom Validator** | Added — `validation/DepartmentValidator.java` + `@InitBinder` |
+| ✅ Done | **Custom Validator** | Added — `validation/DepartmentValidator.java` + `@InitBinder` in `UserController` |
 | 🟡 Medium | **Event Publisher + Listener** | Clean decoupling for side effects |
 | 🟡 Medium | **@Async + @Scheduled** | Background processing patterns |
 | 🟢 Low | **Spring Security** | When auth is required |
@@ -211,8 +214,8 @@ Browser Response
 📨 2a. REQUEST BODY ADVICE - beforeBodyRead
 🔄 2b. MESSAGE CONVERTER - read (deserializing)
 📨 2c. REQUEST BODY ADVICE - afterBodyRead
-✂️ 2d. INIT BINDER - initBinder() → StringTrimmerEditor registered      ← Validation Layer
-✅ 2e. @VALID - DepartmentValidator.isValid()                             ← Validation Layer
+✂️ 2d. INIT BINDER - initBinder() → StringTrimmerEditor registered     ← Validation Layer
+✅ 2e. @VALID - DepartmentValidator.isValid()                            ← Validation Layer
 🔑 2f. ARGUMENT RESOLVER - injecting RequestInfo
 🎯 3a. AOP - CONTROLLER BEFORE (@Around)
 🎯 3b. AOP - @Before

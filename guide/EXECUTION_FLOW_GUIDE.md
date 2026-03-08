@@ -146,15 +146,15 @@ curl -X POST http://localhost:8080/api/users \
     "department": "Engineering"
   }'
 ```
-**Stack**: Filter → Interceptor → AOP → Controller → `@Valid` → Service → AOP → Interceptor → Filter
+**Stack**: Filter → Interceptor → RequestBodyAdvice → MessageConverter.read → afterBodyRead → `@InitBinder` → `@Valid` → ArgumentResolver → AOP → Controller → Service → AOP → ResponseBodyAdvice → MessageConverter.write → Interceptor → Filter
 
 **Exception branch** — validation failure:
 ```bash
 curl -X POST http://localhost:8080/api/users \
   -H "Content-Type: application/json" \
-  -d '{"name": "", "email": "not-an-email"}'
+  -d '{"name": "", "email": "not-an-email", "department": "Unknown"}'
 ```
-**Stack**: ... → `@Valid` fails → `MethodArgumentNotValidException` → `handleValidationExceptions()`
+**Stack**: ... → `@InitBinder` → `@Valid` fails → `MethodArgumentNotValidException` → `handleValidationExceptions()`
 
 ---
 
