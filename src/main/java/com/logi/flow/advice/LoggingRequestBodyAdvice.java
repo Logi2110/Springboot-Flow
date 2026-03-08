@@ -51,7 +51,7 @@ public class LoggingRequestBodyAdvice implements RequestBodyAdvice {
                                            MethodParameter parameter,
                                            Type targetType,
                                            Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
-        logger.info("📨 2b. REQUEST BODY ADVICE - beforeBodyRead: parameter='{}', targetType='{}', converter='{}'",
+        logger.info("📨 2a. REQUEST BODY ADVICE - beforeBodyRead: parameter='{}', targetType='{}', converter='{}'",
                 parameter.getParameterName(),
                 targetType.getTypeName(),
                 converterType.getSimpleName());
@@ -68,7 +68,7 @@ public class LoggingRequestBodyAdvice implements RequestBodyAdvice {
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage,
                                 MethodParameter parameter, Type targetType,
                                 Class<? extends HttpMessageConverter<?>> converterType) {
-        logger.info("📨 2d. REQUEST BODY ADVICE - afterBodyRead: deserialized body='{}'", body);
+        logger.info("📨 2c. REQUEST BODY ADVICE - afterBodyRead: deserialized body='{}'", body);
         // Return as-is — no modification in this demo
         return body;
     }

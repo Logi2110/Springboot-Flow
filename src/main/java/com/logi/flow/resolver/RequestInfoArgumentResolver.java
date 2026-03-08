@@ -59,7 +59,7 @@ public class RequestInfoArgumentResolver implements HandlerMethodArgumentResolve
 
         RequestInfo info = new RequestInfo(requestId, method, uri, remote, System.currentTimeMillis());
 
-        logger.info("🔑 2a. ARGUMENT RESOLVER - resolveArgument: injecting RequestInfo {} for parameter '{}'",
+        logger.info("🔑 2d. ARGUMENT RESOLVER - resolveArgument: injecting RequestInfo {} for parameter '{}'",
                 info, parameter.getParameterName());
 
         return info;

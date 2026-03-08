@@ -251,7 +251,7 @@
 
         <!-- SIDE LABELS -->
         <mxCell id="lbl-req" value="REQUEST (down)" style="text;html=1;align=center;verticalAlign=middle;fontColor=#00E7FF;fontStyle=1;fontSize=13;rotation=-90;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="320" y="730" width="120" height="30" as="geometry" />
+          <mxGeometry x="146" y="730" width="120" height="30" as="geometry" />
         </mxCell>
         <mxCell id="lbl-res" value="RESPONSE (up)" style="text;html=1;align=center;verticalAlign=middle;fontColor=#FF6A00;fontStyle=1;fontSize=13;rotation=90;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="895" y="730" width="120" height="30" as="geometry" />

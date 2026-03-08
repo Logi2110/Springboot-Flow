@@ -44,7 +44,7 @@ public class MethodLoggingAspect {
             result = joinPoint.proceed(); // Execute the actual method
             
             long duration = System.currentTimeMillis() - startTime;
-            logger.info("🎯 5a. AOP - CONTROLLER AFTER: {}.{}() completed in {}ms, result: {}", 
+            logger.info("🎯 5c. AOP - CONTROLLER AFTER (@Around exits): {}.{}() completed in {}ms, result: {}", 
                        className, methodName, duration, result);
             
             return result;
@@ -89,17 +89,17 @@ public class MethodLoggingAspect {
                    joinPoint.getSignature().getName());
     }
 
-    // After advice example
+    // After advice example — fires SECOND after method completes (after @AfterReturning, before @Around)
     @After("controllerMethods()")
     public void afterControllerMethod(JoinPoint joinPoint) {
-        logger.info("🎯 5b. AOP - @After: Finished executing {}", 
+        logger.info("🎯 5b. AOP - @After (fires 2nd, always): Finished executing {}", 
                    joinPoint.getSignature().getName());
     }
 
-    // AfterReturning advice example
+    // AfterReturning advice example — fires FIRST after method returns (before @After and @Around)
     @AfterReturning(pointcut = "controllerMethods()", returning = "result")
     public void afterReturning(JoinPoint joinPoint, Object result) {
-        logger.info("🎯 5c. AOP - @AfterReturning: {} returned: {}", 
+        logger.info("🎯 5a. AOP - @AfterReturning (fires 1st on return): {} returned: {}", 
                    joinPoint.getSignature().getName(), result);
     }
 

@@ -134,13 +134,13 @@ Browser Request
 [HandlerInterceptor.preHandle]   ← Spring Interceptor ✅
      │
      ▼
-[ArgumentResolver]               ← Resolve method params ✅ (RequestInfoArgumentResolver)
-     │
-     ▼
 [RequestBodyAdvice]              ← Pre-process request body ✅ (LoggingRequestBodyAdvice)
      │
      ▼
 [MessageConverter.read()]        ← Deserialize JSON ✅ (LoggingMessageConverter)
+     │
+     ▼
+[ArgumentResolver]               ← Resolve method params ✅ (RequestInfoArgumentResolver)
      │
      ▼
 [AOP @Before / @Around]          ← AOP Aspect ✅
@@ -200,20 +200,21 @@ Browser Response
 
 🔥 1.  FILTER - BEFORE
 🚀 2.  INTERCEPTOR - preHandle
-🔑 2a. ARGUMENT RESOLVER - injecting RequestInfo        ← new
-📨 2b. REQUEST BODY ADVICE - beforeBodyRead             ← new
-🔄 2c. MESSAGE CONVERTER - read (deserializing)         ← new
-📨 2d. REQUEST BODY ADVICE - afterBodyRead              ← new
+
+📨 2a. REQUEST BODY ADVICE - beforeBodyRead             ← new
+🔄 2b. MESSAGE CONVERTER - read (deserializing)         ← new
+📨 2c. REQUEST BODY ADVICE - afterBodyRead              ← new
+🔑 2d. ARGUMENT RESOLVER - injecting RequestInfo        ← new
 🎯 3a. AOP - CONTROLLER BEFORE (@Around)
 🎯 3b. AOP - @Before
 📋 3.  CONTROLLER - EXECUTING: processUser()
 🔧 4a. AOP - SERVICE BEFORE
 🔧 4.  SERVICE - EXECUTING: processUser()
 🔧 4b. AOP - SERVICE AFTER
-🎯 5a. AOP - CONTROLLER AFTER
-🎯 5b. AOP - @After
-🎯 5c. AOP - @AfterReturning
 📋 5.  CONTROLLER - RETURNING
+🎯 5a. AOP - @AfterReturning          ← fires 1st (success path only)
+🎯 5b. AOP - @After                   ← fires 2nd (always, success or throw)
+🎯 5c. AOP - CONTROLLER AFTER         ← fires 3rd (@Around regains control)
 📤 5d. RESPONSE BODY ADVICE - beforeBodyWrite           ← new
 🔄 5e. MESSAGE CONVERTER - write (serializing)          ← new
 🚀 6.  INTERCEPTOR - postHandle

@@ -44,9 +44,9 @@ public class LoggingMessageConverter extends MappingJackson2HttpMessageConverter
     @Override
     public Object read(Type type, Class<?> contextClass, HttpInputMessage inputMessage)
             throws IOException, HttpMessageNotReadableException {
-        logger.info("🔄 2c. MESSAGE CONVERTER - read: deserializing type='{}'", type.getTypeName());
+        logger.info("🔄 2b. MESSAGE CONVERTER - read: deserializing type='{}'", type.getTypeName());
         Object result = super.read(type, contextClass, inputMessage);
-        logger.info("🔄 2c. MESSAGE CONVERTER - read complete: result='{}'", result);
+        logger.info("🔄 2b. MESSAGE CONVERTER - read complete: result='{}'", result);
         return result;
     }
 
