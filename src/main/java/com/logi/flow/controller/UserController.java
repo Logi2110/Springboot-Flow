@@ -7,6 +7,7 @@ import com.logi.flow.event.AsyncDemoService;
 import com.logi.flow.event.UserProcessedEvent;
 import com.logi.flow.resolver.InjectRequestInfo;
 import com.logi.flow.resolver.RequestInfo;
+import com.logi.flow.service.CacheDemoService;
 import com.logi.flow.service.UserService;
 import com.logi.flow.startup.StartupInfoStore;
 import jakarta.validation.Valid;
@@ -33,6 +34,7 @@ import java.util.Map;
  * Flow 5 - GET /startup-info : Startup + Bean Lifecycle events collected during boot
  * Flow 6 - GET /async-demo   : @Async fire-and-forget — returns 202, task finishes ~2s later
  * Flow 7 - GET /event-demo   : Event chain only — publishes UserProcessedEvent, observe sync + async listeners
+ * Flow 8 - GET/PUT/DELETE /cache-demo/{id} : Caching Layer — @Cacheable / @CachePut / @CacheEvict
  */
 @RestController
 @RequestMapping("/api/users")
@@ -53,6 +55,9 @@ public class UserController {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    private CacheDemoService cacheDemoService;
 
     /**
      * VALIDATION LAYER — DataBinder
@@ -215,6 +220,102 @@ public class UserController {
                 "name", name,
                 "email", email,
                 "hint", "Sync listener ran on this HTTP thread; async listener runs on task-N AFTER this response"
+        ));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // FLOW 8: Caching Layer — @Cacheable / @CachePut / @CacheEvict
+    // ─────────────────────────────────────────────────────────────────────────────
+
+    /**
+     * FLOW 8a / 8b: @Cacheable demo — cache MISS vs HIT
+     *
+     * Call once  → MISS : method body runs, ~500ms delay, logs "CACHE - MISS" and "CACHE - STORED"
+     * Call again → HIT  : Spring intercepts BEFORE the method; no log line at all, instant response
+     *
+     * The ABSENCE of the "MISS" log line is the proof that the cached value was returned.
+     *
+     * Cache: "users", key: id
+     */
+    @GetMapping("/cache-demo/{id}")
+    public ResponseEntity<Map<String, Object>> cacheableDemo(@PathVariable Long id) {
+        logger.info("📋 3. CONTROLLER - EXECUTING: cacheableDemo() id={} | Calling @Cacheable getUser()", id);
+
+        long start = System.currentTimeMillis();
+        Map<String, Object> cached = cacheDemoService.getUser(id);
+        long elapsed = System.currentTimeMillis() - start;
+
+        logger.info("📋 5. CONTROLLER - RETURNING: id={} elapsed={}ms (>400ms = MISS, <50ms = HIT)", id, elapsed);
+        return ResponseEntity.ok(Map.of(
+                "result",      cached,
+                "elapsedMs",   elapsed,
+                "cacheHint",   elapsed < 100 ? "HIT — returned from cache instantly" : "MISS — loaded from source (~500ms)",
+                "nextCallHint", "Call GET /api/users/cache-demo/" + id + " again to see a cache HIT"
+        ));
+    }
+
+    /**
+     * FLOW 8c: @CachePut demo — always executes + updates cache
+     *
+     * Unlike @Cacheable, the method body always runs. The result replaces the cached entry.
+     * Use for update operations to keep the cache consistent after a write.
+     *
+     * Cache: "users", key: id
+     */
+    @PutMapping("/cache-demo/{id}")
+    public ResponseEntity<Map<String, Object>> cachePutDemo(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "Updated Name") String data) {
+        logger.info("📋 3. CONTROLLER - EXECUTING: cachePutDemo() id={} data='{}' | Calling @CachePut updateUser()", id, data);
+
+        Map<String, Object> updated = cacheDemoService.updateUser(id, data);
+
+        logger.info("📋 5. CONTROLLER - RETURNING: @CachePut done — cache updated for id={}", id);
+        return ResponseEntity.ok(Map.of(
+                "result",      updated,
+                "annotation",  "@CachePut",
+                "hint",        "Method always ran AND cache was updated. GET /api/users/cache-demo/" + id + " will now return this value instantly."
+        ));
+    }
+
+    /**
+     * FLOW 8d: @CacheEvict demo — removes one entry from cache
+     *
+     * After eviction the next GET for the same id will be a MISS again.
+     *
+     * Cache: "users", key: id
+     */
+    @DeleteMapping("/cache-demo/{id}")
+    public ResponseEntity<Map<String, Object>> cacheEvictDemo(@PathVariable Long id) {
+        logger.info("📋 3. CONTROLLER - EXECUTING: cacheEvictDemo() id={} | Calling @CacheEvict evictUser()", id);
+
+        cacheDemoService.evictUser(id);
+
+        logger.info("📋 5. CONTROLLER - RETURNING: id={} evicted from cache 'users'", id);
+        return ResponseEntity.ok(Map.of(
+                "annotation", "@CacheEvict",
+                "evictedId",  id,
+                "hint",       "Entry removed. GET /api/users/cache-demo/" + id + " will be a MISS (~500ms) on the next call."
+        ));
+    }
+
+    /**
+     * FLOW 8e: @CacheEvict(allEntries=true) — clears entire cache
+     *
+     * Every subsequent GET will be a MISS until entries are re-populated.
+     *
+     * Cache: "users"
+     */
+    @DeleteMapping("/cache-demo")
+    public ResponseEntity<Map<String, Object>> cacheEvictAllDemo() {
+        logger.info("📋 3. CONTROLLER - EXECUTING: cacheEvictAllDemo() | Calling @CacheEvict(allEntries=true)");
+
+        cacheDemoService.evictAll();
+
+        logger.info("📋 5. CONTROLLER - RETURNING: entire cache 'users' cleared");
+        return ResponseEntity.ok(Map.of(
+                "annotation", "@CacheEvict(allEntries=true)",
+                "hint",       "ALL entries cleared. Every GET /api/users/cache-demo/{id} will be a MISS until re-populated."
         ));
     }
 }

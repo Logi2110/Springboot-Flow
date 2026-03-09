@@ -2,6 +2,12 @@ spring:
   application:
     name: flow
 
+  # Caching Layer — uses simple in-memory ConcurrentMapCacheManager (no external server required)
+  # Switch to redis/caffeine in production by changing spring.cache.type and adding the dependency
+  cache:
+    type: simple
+    cache-names: users
+
 # Enable detailed logging to see the execution flow
 logging:
   level:
@@ -22,7 +28,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,metrics,caches
   endpoint:
     health:
       show-details: always

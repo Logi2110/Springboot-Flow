@@ -233,6 +233,214 @@
             }
           ]        },
         {
+          "name": "Flow 8 — Cache Layer (@Cacheable / @CachePut / @CacheEvict)",
+          "description": "FLOW 8 — Caching Layer demo. Run the requests in order to observe every cache annotation in action.\n\nRecommended sequence:\n  8a → GET  /{id}        — MISS  (~500ms, logs 'CACHE - MISS')\n  8b → GET  /{id}        — HIT   (instant, NO 'MISS' log line)\n  8c → PUT  /{id}?data=X — @CachePut  (always runs + updates cache)\n  8b → GET  /{id}        — HIT   with new value\n  8d → DELETE /{id}      — @CacheEvict (removes one entry)\n  8a → GET  /{id}        — MISS  again\n  8e → DELETE /          — @CacheEvict(allEntries=true)\n\nCache name  : 'users'\nCacheManager: ConcurrentMapCacheManager (simple in-memory, no server required)\nSee also    : GET /actuator/caches to inspect cache state",
+          "item": [
+            {
+              "name": "Flow 8a — @Cacheable MISS (first call, ~500ms)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/users/cache-demo/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "users", "cache-demo", "1"]
+                },
+                "description": "FLOW 8a — @Cacheable cache MISS.\n\nid=1 is NOT in the cache yet. CacheDemoService.getUser(1) runs fully:\n  1. Logs 'CACHE - MISS — id=1 NOT in cache'\n  2. Simulates 500ms DB call\n  3. Stores result in cache 'users' under key=1\n  4. Returns data\n\nexpected body.elapsedMs ≈ 500\nexpected body.cacheHint  = 'MISS — loaded from source (~500ms)'\n\nRun Flow 8b immediately after to see the HIT."
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "",
+                      "pm.test(\"Cache MISS — elapsedMs > 400\", () => {",
+                      "    const json = pm.response.json();",
+                      "    pm.expect(json.elapsedMs).to.be.above(400);",
+                      "    pm.expect(json.cacheHint).to.include('MISS');",
+                      "});",
+                      "",
+                      "pm.test(\"Result contains expected fields\", () => {",
+                      "    const json = pm.response.json();",
+                      "    pm.expect(json.result.id).to.eql(1);",
+                      "    pm.expect(json.result.data).to.exist;",
+                      "    pm.expect(json.result.source).to.eql('database');",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Flow 8b — @Cacheable HIT (second call, instant)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/users/cache-demo/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "users", "cache-demo", "1"]
+                },
+                "description": "FLOW 8b — @Cacheable cache HIT.\n\nid=1 IS in the cache (populated by Flow 8a). Spring intercepts BEFORE CacheDemoService.getUser(1) is called:\n  - The method body does NOT execute (NO 'CACHE - MISS' log line)\n  - Cached value returned immediately (~0ms)\n\nexpected body.elapsedMs  < 100\nexpected body.cacheHint  = 'HIT — returned from cache instantly'\n\nKey insight: the ABSENCE of the 'MISS' log line is the proof the cache worked."
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "",
+                      "pm.test(\"Cache HIT — elapsedMs < 100\", () => {",
+                      "    const json = pm.response.json();",
+                      "    pm.expect(json.elapsedMs).to.be.below(100);",
+                      "    pm.expect(json.cacheHint).to.include('HIT');",
+                      "});",
+                      "",
+                      "pm.test(\"Same data as MISS\", () => {",
+                      "    const json = pm.response.json();",
+                      "    pm.expect(json.result.id).to.eql(1);",
+                      "    pm.expect(json.result.source).to.eql('database');",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Flow 8c — @CachePut (always runs + updates cache)",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/users/cache-demo/1?data=Alice%20(Updated)",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "users", "cache-demo", "1"],
+                  "query": [
+                    { "key": "data", "value": "Alice (Updated)" }
+                  ]
+                },
+                "description": "FLOW 8c — @CachePut.\n\nUnlike @Cacheable, @CachePut ALWAYS executes the method body AND updates the cache.\nUse for write operations to keep the cache consistent with the data source.\n\nAfter this call:\n  - 'CACHE - @CachePut' log line appears (method ran)\n  - cache 'users' key=1 now holds the new data\n  - GET /api/users/cache-demo/1 (8b) returns the updated value instantly"
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "",
+                      "pm.test(\"@CachePut annotation confirmed\", () => {",
+                      "    const json = pm.response.json();",
+                      "    pm.expect(json.annotation).to.eql('@CachePut');",
+                      "    pm.expect(json.result.data).to.include('Updated');",
+                      "    pm.expect(json.result.source).to.include('updated');",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Flow 8d — @CacheEvict (evict one entry)",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/users/cache-demo/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "users", "cache-demo", "1"]
+                },
+                "description": "FLOW 8d — @CacheEvict.\n\nRemoves the entry for id=1 from cache 'users'.\nAfter this call, GET /api/users/cache-demo/1 will be a MISS (~500ms) again."
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "",
+                      "pm.test(\"@CacheEvict annotation confirmed\", () => {",
+                      "    const json = pm.response.json();",
+                      "    pm.expect(json.annotation).to.eql('@CacheEvict');",
+                      "    pm.expect(json.evictedId).to.eql(1);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Flow 8e — @CacheEvict allEntries (clear entire cache)",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/users/cache-demo",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "users", "cache-demo"]
+                },
+                "description": "FLOW 8e — @CacheEvict(allEntries=true).\n\nClears ALL entries from cache 'users' at once.\nEvery subsequent GET for any id will be a MISS until repopulated."
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "",
+                      "pm.test(\"allEntries annotation confirmed\", () => {",
+                      "    const json = pm.response.json();",
+                      "    pm.expect(json.annotation).to.include('allEntries');",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Flow 8f — Verify Evict (should be MISS again)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/users/cache-demo/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "users", "cache-demo", "1"]
+                },
+                "description": "FLOW 8f — Verify cache is empty after eviction.\n\nRun after Flow 8d or 8e. id=1 is no longer cached.\nExpect: elapsedMs > 400 (MISS — loads from source again)."
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                      "",
+                      "pm.test(\"MISS after eviction — elapsedMs > 400\", () => {",
+                      "    const json = pm.response.json();",
+                      "    pm.expect(json.elapsedMs).to.be.above(400);",
+                      "    pm.expect(json.cacheHint).to.include('MISS');",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
           "name": "Flow 7 — Event Demo (UserProcessedEvent chain)",
           "request": {
             "method": "GET",

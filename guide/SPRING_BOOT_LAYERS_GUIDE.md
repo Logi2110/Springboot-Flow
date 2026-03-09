@@ -27,6 +27,7 @@
 | **@Async @EventListener** | `event/UserEventListener.java` | Handles event in a background thread pool |
 | **@Async Service** | `event/AsyncDemoService.java` | Fire-and-forget background task (Flow 6) |
 | **@Scheduled** | `event/ScheduledDemoTask.java` | Fires every 2 minutes — fixedRate demo |
+| **Cache** | `service/CacheDemoService.java` | `@Cacheable` / `@CachePut` / `@CacheEvict` — in-memory cache (Flow 8) |
 
 ---
 
@@ -63,11 +64,39 @@
 
 ---
 
-### 4. Caching Layer
+### ~~4. Caching Layer~~ ✅ Added
 
-| Layer | Annotation | When Used |
+| Layer | Location | When Used |
 |---|---|---|
-| **Cache** | `@Cacheable`, `@CacheEvict`, `@CachePut` | Avoid repeated expensive calls (DB, APIs) |
+| **@Cacheable** | `service/CacheDemoService.java` | Cache MISS: runs method, stores result. HIT: Spring skips method entirely. |
+| **@CachePut** | `service/CacheDemoService.java` | Always runs method AND updates cache entry. Use after write operations. |
+| **@CacheEvict** | `service/CacheDemoService.java` | Removes one or all entries. Next GET is a MISS again. |
+
+**Cache flow** (triggered by `GET/PUT/DELETE /api/users/cache-demo/{id}` — Flow 8):
+```
+Controller → cacheDemoService.getUser(id)     ← Spring AOP proxy intercepts
+                    │
+                    ├─ HIT  → returns cached value (~0ms)   ← method body NEVER runs
+                    └─ MISS → method body runs (~500ms)
+                               stores result in cache 'users'
+                               next call is a HIT
+```
+
+**Recommended demo sequence** (run in Postman Flow 8a → 8f):
+```
+Flow 8a: GET  /{id}        → MISS  (~500ms, logs 'CACHE - MISS + CACHE - STORED')
+Flow 8b: GET  /{id}        → HIT   (<100ms, NO 'MISS' log — method skipped)
+Flow 8c: PUT  /{id}?data=X → @CachePut  (always runs, updates cache)
+Flow 8b: GET  /{id}        → HIT   with updated value
+Flow 8d: DELETE /{id}      → @CacheEvict (removes one entry)
+Flow 8a: GET  /{id}        → MISS  again
+Flow 8e: DELETE /           → @CacheEvict(allEntries=true)
+```
+
+> 💡 `@EnableCaching` is on `ExecutionFlowConfig`.
+> 💡 `CacheManager`: `ConcurrentMapCacheManager` (simple in-memory, no server needed). Switch to `CaffeineCacheManager` (TTL/size), `RedisCacheManager` (distributed) in production.
+> 💡 The cache key uses SpEL: `key = "#id"`. Keys must match across `@Cacheable` and `@CachePut`/`@CacheEvict` on the same cache name.
+> 💡 Cache state visible at `GET /actuator/caches`.
 
 ---
 
@@ -266,6 +295,7 @@ Browser Response
 | 🟢 Low | **Spring Security** | When auth is required |
 | ✅ Done | **Bean Lifecycle** | Added — `lifecycle/BeanLifecycleDemoBean.java`, `FlowBeanPostProcessor`, `FlowBeanFactoryPostProcessor` |
 | ✅ Done | **Startup Layer** | Added — `startup/StartupApplicationRunner.java`, `StartupEnvironmentPostProcessor.java`, `StartupInfoStore.java` |
+| ✅ Done | **Caching Layer** | Added — `service/CacheDemoService.java` — `@Cacheable` / `@CachePut` / `@CacheEvict` (Flow 8) |
 
 
 ## Full Flow Sequence (source of truth flow)
@@ -293,3 +323,17 @@ Browser Response
 🚀 6.  INTERCEPTOR - postHandle
 🚀 7.  INTERCEPTOR - afterCompletion
 🔥 8.  FILTER - AFTER
+
+### Flow 8: Cache Layer Demo (GET/PUT/DELETE /api/users/cache-demo/{id})
+
+🔥 1.  FILTER - BEFORE
+🚀 2.  INTERCEPTOR - preHandle
+🎯 3a. AOP - CONTROLLER BEFORE
+📋 3.  CONTROLLER - EXECUTING: cacheableDemo() / cachePutDemo() / cacheEvictDemo()
+💾 4a. CACHE LAYER - Spring AOP proxy intercepts cacheDemoService call
+              ├─ HIT : 💾 CACHE HIT — method skipped, returns instantly (elapsedMs < 100)
+              └─ MISS: 💾 CACHE MISS — method runs, result stored (elapsedMs > 400)
+📋 5.  CONTROLLER - RETURNING: HTTP 200 with elapsedMs + cacheHint
+🎯 5a. AOP - @AfterReturning / @After / @Around AFTER
+🚀 6.  INTERCEPTOR - postHandle / afterCompletion
+🔥 7.  FILTER - AFTER

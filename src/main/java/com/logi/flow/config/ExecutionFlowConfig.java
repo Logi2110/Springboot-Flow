@@ -4,6 +4,7 @@ import com.logi.flow.filter.LoggingFilter;
 import com.logi.flow.interceptor.LoggingInterceptor;
 import com.logi.flow.resolver.RequestInfoArgumentResolver;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -21,6 +22,7 @@ import java.util.ListIterator;
 @EnableAspectJAutoProxy
 @EnableAsync
 @EnableScheduling
+@EnableCaching
 public class ExecutionFlowConfig implements WebMvcConfigurer {
 
     @Bean

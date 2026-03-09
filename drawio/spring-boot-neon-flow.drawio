@@ -1,151 +1,133 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.5.2 Chrome/142.0.7444.265 Electron/39.6.1 Safari/537.36" version="29.5.2" pages="3">
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.5.2 Chrome/142.0.7444.265 Electron/39.6.1 Safari/537.36" version="29.5.2" pages="4">
   <diagram id="springboot-neon-flow" name="Spring Boot Full Request Lifecycle">
-    <mxGraphModel dx="1200" dy="900" grid="0" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="2200" math="0" shadow="0" background="#000000">
+    <mxGraphModel dx="1042" dy="626" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="2200" background="#000000" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="title" value="Spring Boot -- Full Request Lifecycle" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#00E7FF;fontStyle=1;fontSize=22;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="280" y="18" width="480" height="40" as="geometry" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#00E7FF;fontStyle=1;fontSize=22;shadow=0;" value="Spring Boot -- Full Request Lifecycle" vertex="1">
+          <mxGeometry height="40" width="480" x="280" y="18" as="geometry" />
         </mxCell>
-        <mxCell id="leg-title" value="Layers" style="text;html=1;align=left;fontColor=#FFFFFF;fontStyle=1;fontSize=13;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="20" y="70" width="80" height="24" as="geometry" />
+        <mxCell id="leg-title" parent="1" style="text;html=1;align=left;fontColor=#FFFFFF;fontStyle=1;fontSize=13;strokeColor=none;fillColor=none;" value="Layers" vertex="1">
+          <mxGeometry height="24" width="80" x="20" y="70" as="geometry" />
         </mxCell>
-        <mxCell id="leg1" value="Client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;fontColor=#00E7FF;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="20" y="100" width="140" height="26" as="geometry" />
+        <mxCell id="leg1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;fontColor=#00E7FF;fontStyle=1;fontSize=11;shadow=0;" value="Client" vertex="1">
+          <mxGeometry height="26" width="140" x="20" y="100" as="geometry" />
         </mxCell>
-        <mxCell id="leg2" value="Filter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF007F;fontColor=#FF007F;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="20" y="132" width="140" height="26" as="geometry" />
+        <mxCell id="leg2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF007F;fontColor=#FF007F;fontStyle=1;fontSize=11;shadow=0;" value="Filter" vertex="1">
+          <mxGeometry height="26" width="140" x="20" y="132" as="geometry" />
         </mxCell>
-        <mxCell id="leg3" value="DispatcherServlet" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;fontColor=#1B6EFF;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="20" y="164" width="140" height="26" as="geometry" />
+        <mxCell id="leg3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;fontColor=#1B6EFF;fontStyle=1;fontSize=11;shadow=0;" value="DispatcherServlet" vertex="1">
+          <mxGeometry height="26" width="140" x="20" y="164" as="geometry" />
         </mxCell>
-        <mxCell id="leg4" value="Interceptor / Advice" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;fontColor=#BC13FE;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="20" y="196" width="140" height="26" as="geometry" />
+        <mxCell id="leg4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;fontColor=#BC13FE;fontStyle=1;fontSize=11;shadow=0;" value="Interceptor / Advice" vertex="1">
+          <mxGeometry height="26" width="140" x="20" y="196" as="geometry" />
         </mxCell>
-        <mxCell id="leg5" value="Validation Layer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;fontColor=#FF8C00;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="20" y="228" width="140" height="26" as="geometry" />
+        <mxCell id="leg5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;fontColor=#FF8C00;fontStyle=1;fontSize=11;shadow=0;" value="Validation Layer" vertex="1">
+          <mxGeometry height="26" width="140" x="20" y="228" as="geometry" />
         </mxCell>
-        <mxCell id="leg6" value="AOP + Controller" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;fontColor=#39FF14;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="20" y="260" width="140" height="26" as="geometry" />
+        <mxCell id="leg6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;fontColor=#39FF14;fontStyle=1;fontSize=11;shadow=0;" value="AOP + Controller" vertex="1">
+          <mxGeometry height="26" width="140" x="20" y="260" as="geometry" />
         </mxCell>
-        <mxCell id="leg7" value="Service / Repository" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;fontColor=#F7EB07;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="20" y="292" width="140" height="26" as="geometry" />
+        <mxCell id="leg7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;fontColor=#F7EB07;fontStyle=1;fontSize=11;shadow=0;" value="Service / Repository" vertex="1">
+          <mxGeometry height="26" width="140" x="20" y="292" as="geometry" />
         </mxCell>
-        <mxCell id="leg8" value="Database" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF6A00;fontColor=#FF6A00;fontStyle=1;fontSize=11;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="20" y="324" width="140" height="26" as="geometry" />
+        <mxCell id="leg8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF6A00;fontColor=#FF6A00;fontStyle=1;fontSize=11;shadow=0;" value="Database" vertex="1">
+          <mxGeometry height="26" width="140" x="20" y="324" as="geometry" />
         </mxCell>
-        <!-- n1 CLIENT -->
-        <mxCell id="n1" value="[1] Client - Browser / Mobile / Postman" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="70" width="300" height="54" as="geometry" />
+        <mxCell id="n1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=13;shadow=0;" value="[1] Client - Browser / Mobile / Postman" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="70" as="geometry" />
         </mxCell>
-        <mxCell id="e1" value="HTTP Request" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n1" target="n2">
+        <mxCell id="e1" edge="1" parent="1" source="n1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n2" value="HTTP Request">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n2 FILTER BEFORE -->
-        <mxCell id="n2" value="[2] Filter BEFORE - LoggingFilter (jakarta.servlet.Filter)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF007F;strokeWidth=1.5;fontColor=#FF007F;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="174" width="300" height="54" as="geometry" />
+        <mxCell id="n2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF007F;strokeWidth=1.5;fontColor=#FF007F;fontStyle=0;fontSize=13;shadow=0;" value="[2] Filter BEFORE - LoggingFilter (jakarta.servlet.Filter)" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="174" as="geometry" />
         </mxCell>
-        <mxCell id="e2" value="Forwards Request" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#FF007F;strokeWidth=1.5;fontColor=#FF007F;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n2" target="n3">
+        <mxCell id="e2" edge="1" parent="1" source="n2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#FF007F;strokeWidth=1.5;fontColor=#FF007F;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n3" value="Forwards Request">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n3 DISPATCHERSERVLET -->
-        <mxCell id="n3" value="[3] DispatcherServlet - Front Controller / HandlerMapping" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="278" width="300" height="54" as="geometry" />
+        <mxCell id="n3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontStyle=0;fontSize=13;shadow=0;" value="[3] DispatcherServlet - Front Controller / HandlerMapping" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="278" as="geometry" />
         </mxCell>
-        <mxCell id="e3" value="Resolves Handler" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n3" target="n4">
+        <mxCell id="e3" edge="1" parent="1" source="n3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n4" value="Resolves Handler">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n4 INTERCEPTOR preHandle -->
-        <mxCell id="n4" value="[4] Interceptor - preHandle (LoggingInterceptor)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="382" width="300" height="54" as="geometry" />
+        <mxCell id="n4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" value="[4] Interceptor - preHandle (LoggingInterceptor)" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="382" as="geometry" />
         </mxCell>
-        <mxCell id="e4" value="Pre-process Body" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n4" target="n5">
+        <mxCell id="e4" edge="1" parent="1" source="n4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n5" value="Pre-process Body">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n5 REQUEST BODY ADVICE beforeBodyRead -->
-        <mxCell id="n5" value="[5] RequestBodyAdvice - beforeBodyRead (LoggingRequestBodyAdvice)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="486" width="300" height="54" as="geometry" />
+        <mxCell id="n5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" value="[5] RequestBodyAdvice - beforeBodyRead (LoggingRequestBodyAdvice)" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="486" as="geometry" />
         </mxCell>
-        <mxCell id="e5" value="Deserialize JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n5" target="n6">
+        <mxCell id="e5" edge="1" parent="1" source="n5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n6" value="Deserialize JSON">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n6 MESSAGE CONVERTER read -->
-        <mxCell id="n6" value="[6] MessageConverter - read (deserializing JSON to object)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="590" width="300" height="54" as="geometry" />
+        <mxCell id="n6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" value="[6] MessageConverter - read (deserializing JSON to object)" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="590" as="geometry" />
         </mxCell>
-        <mxCell id="e6" value="afterBodyRead" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n6" target="n7">
+        <mxCell id="e6" edge="1" parent="1" source="n6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n7" value="afterBodyRead">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n7 REQUEST BODY ADVICE afterBodyRead -->
-        <mxCell id="n7" value="[7] RequestBodyAdvice - afterBodyRead (body deserialized)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="694" width="300" height="54" as="geometry" />
+        <mxCell id="n7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" value="[7] RequestBodyAdvice - afterBodyRead (body deserialized)" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="694" as="geometry" />
         </mxCell>
-        <mxCell id="e7" value="@InitBinder" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n7" target="n8">
+        <mxCell id="e7" edge="1" parent="1" source="n7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n8" value="@InitBinder">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n8 @InitBinder DataBinder — Validation Layer -->
-        <mxCell id="n8" value="[8] @InitBinder - DataBinder (UserController.initBinder, StringTrimmerEditor)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="798" width="300" height="54" as="geometry" />
+        <mxCell id="n8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=13;shadow=0;" value="[8] @InitBinder - DataBinder (UserController.initBinder, StringTrimmerEditor)" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="798" as="geometry" />
         </mxCell>
-        <mxCell id="e8" value="@Valid" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n8" target="n9">
+        <mxCell id="e8" edge="1" parent="1" source="n8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n9" value="@Valid">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n9 @Valid DepartmentValidator — Validation Layer -->
-        <mxCell id="n9" value="[9] @Valid - DepartmentValidator.isValid() (Bean Validation)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="902" width="300" height="54" as="geometry" />
+        <mxCell id="n9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=13;shadow=0;" value="[9] @Valid - DepartmentValidator.isValid() (Bean Validation)" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="902" as="geometry" />
         </mxCell>
-        <mxCell id="e9" value="Resolve Params" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n9" target="n10">
+        <mxCell id="e9" edge="1" parent="1" source="n9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n10" value="Resolve Params">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n10 ARGUMENT RESOLVER -->
-        <mxCell id="n10" value="[10] ArgumentResolver - Inject RequestInfo (@InjectRequestInfo)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="1006" width="300" height="54" as="geometry" />
+        <mxCell id="n10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" value="[10] ArgumentResolver - Inject RequestInfo (@InjectRequestInfo)" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="1006" as="geometry" />
         </mxCell>
-        <mxCell id="e10" value="Invoke AOP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n10" target="n11">
+        <mxCell id="e10" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n11" value="Invoke AOP">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n11 AOP CONTROLLER BEFORE -->
-        <mxCell id="n11" value="[11] AOP - @Around / @Before (Controller method entry)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="1110" width="300" height="54" as="geometry" />
+        <mxCell id="n11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=13;shadow=0;" value="[11] AOP - @Around / @Before (Controller method entry)" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="1110" as="geometry" />
         </mxCell>
-        <mxCell id="e11" value="Execute Method" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n11" target="n12">
+        <mxCell id="e11" edge="1" parent="1" source="n11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n12" value="Execute Method">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n12 CONTROLLER -->
-        <mxCell id="n12" value="[12] Controller - @RestController executing processUser()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="1214" width="300" height="54" as="geometry" />
+        <mxCell id="n12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=13;shadow=0;" value="[12] Controller - @RestController executing processUser()" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="1214" as="geometry" />
         </mxCell>
-        <mxCell id="e12" value="Call Service (AOP wraps)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n12" target="n13">
+        <mxCell id="e12" edge="1" parent="1" source="n12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n13" value="Call Service (AOP wraps)">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n13 AOP SERVICE BEFORE -->
-        <mxCell id="n13" value="[13] AOP - Service BEFORE (@Around wraps Service method)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="1318" width="300" height="54" as="geometry" />
+        <mxCell id="n13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=13;shadow=0;" value="[13] AOP - Service BEFORE (@Around wraps Service method)" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="1318" as="geometry" />
         </mxCell>
-        <mxCell id="e13" value="Execute Service" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n13" target="n14">
+        <mxCell id="e13" edge="1" parent="1" source="n13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n14" value="Execute Service">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n14 SERVICE -->
-        <mxCell id="n14" value="[14] Service - @Service / @Transactional (business logic)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="1422" width="300" height="54" as="geometry" />
+        <mxCell id="n14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=13;shadow=0;" value="[14] Service - @Service / @Transactional (business logic)" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="1422" as="geometry" />
         </mxCell>
-        <mxCell id="e14" value="Query Repository" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n14" target="n15">
+        <mxCell id="e14" edge="1" parent="1" source="n14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n15" value="Query Repository">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n15 REPOSITORY -->
-        <mxCell id="n15" value="[15] Repository - @Repository / JpaRepository (data access)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="1526" width="300" height="54" as="geometry" />
+        <mxCell id="n15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=13;shadow=0;" value="[15] Repository - @Repository / JpaRepository (data access)" vertex="1">
+          <mxGeometry height="54" width="300" x="370" y="1526" as="geometry" />
         </mxCell>
-        <mxCell id="e15" value="SQL / JPQL Query" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n15" target="n16">
+        <mxCell id="e15" edge="1" parent="1" source="n15" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n16" value="SQL / JPQL Query">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <!-- n16 DATABASE -->
-        <mxCell id="n16" value="[16] Database - JPA / H2 / MySQL" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=none;strokeColor=#FF6A00;strokeWidth=1.5;fontColor=#FF6A00;fontStyle=0;fontSize=13;shadow=0;" vertex="1" parent="1">
-          <mxGeometry x="370" y="1630" width="300" height="70" as="geometry" />
+        <mxCell id="n16" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=none;strokeColor=#FF6A00;strokeWidth=1.5;fontColor=#FF6A00;fontStyle=0;fontSize=13;shadow=0;" value="[16] Database - JPA / H2 / MySQL" vertex="1">
+          <mxGeometry height="70" width="300" x="370" y="1630" as="geometry" />
         </mxCell>
-        <!-- RESPONSE EDGES (right side, going UP) -->
-        <!-- r15: DB → Repository -->
-        <mxCell id="r15" value="Result Set" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#FF6A00;strokeWidth=1.5;fontColor=#FF6A00;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n16" target="n15">
+        <mxCell id="r15" edge="1" parent="1" source="n16" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#FF6A00;strokeWidth=1.5;fontColor=#FF6A00;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n15" value="Result Set">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="700" y="1665" />
@@ -153,8 +135,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <!-- r14: Repository → Service -->
-        <mxCell id="r14" value="Entity / List" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n15" target="n14">
+        <mxCell id="r14" edge="1" parent="1" source="n15" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n14" value="Entity / List">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="714" y="1553" />
@@ -162,8 +143,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <!-- r13: Service → AOP Service -->
-        <mxCell id="r13" value="AOP Service After" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n14" target="n13">
+        <mxCell id="r13" edge="1" parent="1" source="n14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n13" value="AOP Service After">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="728" y="1449" />
@@ -171,8 +151,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <!-- r12: AOP Service → Controller -->
-        <mxCell id="r12" value="Domain Object" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n13" target="n12">
+        <mxCell id="r12" edge="1" parent="1" source="n13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n12" value="Domain Object">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="742" y="1345" />
@@ -180,8 +159,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <!-- r11: Controller → AOP @AfterReturning -->
-        <mxCell id="r11" value="AOP @AfterReturning" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n12" target="n11">
+        <mxCell id="r11" edge="1" parent="1" source="n12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n11" value="AOP @AfterReturning">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="756" y="1241" />
@@ -189,8 +167,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <!-- r10: AOP → ResponseBodyAdvice afterBodyRead (SKIPS ArgResolver/Valid/InitBinder — wide arc at x=900) -->
-        <mxCell id="r10" value="ResponseBodyAdvice" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n11" target="n7">
+        <mxCell id="r10" edge="1" parent="1" source="n11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n7" value="ResponseBodyAdvice">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="900" y="1137" />
@@ -198,8 +175,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <!-- r9: afterBodyRead → MessageConverter (beforeBodyWrite) -->
-        <mxCell id="r9" value="beforeBodyWrite" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n7" target="n6">
+        <mxCell id="r9" edge="1" parent="1" source="n7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n6" value="beforeBodyWrite">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="770" y="721" />
@@ -207,8 +183,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <!-- r8: MessageConverter write → beforeBodyRead -->
-        <mxCell id="r8" value="MessageConverter write" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n6" target="n5">
+        <mxCell id="r8" edge="1" parent="1" source="n6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n5" value="MessageConverter write">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="784" y="617" />
@@ -216,8 +191,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <!-- r7: beforeBodyRead → Interceptor -->
-        <mxCell id="r7" value="Serialized JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n5" target="n4">
+        <mxCell id="r7" edge="1" parent="1" source="n5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n4" value="Serialized JSON">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="798" y="513" />
@@ -225,8 +199,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <!-- r6: Interceptor → DispatcherServlet -->
-        <mxCell id="r6" value="postHandle / afterCompletion" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n4" target="n3">
+        <mxCell id="r6" edge="1" parent="1" source="n4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n3" value="postHandle / afterCompletion">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="812" y="409" />
@@ -234,8 +207,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <!-- r5: DispatcherServlet → Filter -->
-        <mxCell id="r5" value="Servlet Response" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n3" target="n2">
+        <mxCell id="r5" edge="1" parent="1" source="n3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n2" value="Servlet Response">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="826" y="305" />
@@ -243,8 +215,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <!-- r4: Filter → Client -->
-        <mxCell id="r4" value="HTTP Response (Filter AFTER)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#FF007F;strokeWidth=1.5;fontColor=#FF007F;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" edge="1" parent="1" source="n2" target="n1">
+        <mxCell id="r4" edge="1" parent="1" source="n2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#FF007F;strokeWidth=1.5;fontColor=#FF007F;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n1" value="HTTP Response (Filter AFTER)">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="840" y="201" />
@@ -252,12 +223,11 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <!-- SIDE LABELS -->
-        <mxCell id="lbl-req" value="REQUEST (down)" style="text;html=1;align=center;verticalAlign=middle;fontColor=#00E7FF;fontStyle=1;fontSize=13;rotation=-90;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="146" y="870" width="120" height="30" as="geometry" />
+        <mxCell id="lbl-req" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontColor=#00E7FF;fontStyle=1;fontSize=13;rotation=-90;strokeColor=none;fillColor=none;" value="REQUEST (down)" vertex="1">
+          <mxGeometry height="30" width="120" x="146" y="870" as="geometry" />
         </mxCell>
-        <mxCell id="lbl-res" value="RESPONSE (up)" style="text;html=1;align=center;verticalAlign=middle;fontColor=#FF6A00;fontStyle=1;fontSize=13;rotation=90;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="930" y="870" width="120" height="30" as="geometry" />
+        <mxCell id="lbl-res" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontColor=#FF6A00;fontStyle=1;fontSize=13;rotation=90;strokeColor=none;fillColor=none;" value="RESPONSE (up)" vertex="1">
+          <mxGeometry height="30" width="120" x="930" y="870" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
@@ -517,6 +487,116 @@
         <mxCell id="lbl" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontColor=#00E7FF;fontStyle=1;fontSize=13;rotation=-90;strokeColor=none;fillColor=none;" value="EVENT / ASYNC LAYER (5)" vertex="1">
           <mxGeometry height="30" width="200" y="320" as="geometry" />
         </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="cache-layer" name="Cache Layer (Layer 4)">
+    <mxGraphModel dx="1042" dy="626" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="1200" background="#000000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="cl-title" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#00E7FF;fontStyle=1;fontSize=22;shadow=0;" value="Spring Boot -- Cache Layer (Layer 4)" vertex="1">
+          <mxGeometry height="40" width="560" x="240" y="18" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="cl-leg-title" parent="1" style="text;html=1;align=left;fontColor=#FFFFFF;fontStyle=1;fontSize=13;strokeColor=none;fillColor=none;" value="Annotations" vertex="1">
+          <mxGeometry height="24" width="110" x="20" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-leg1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#7986cb;fontColor=#7986cb;fontStyle=1;fontSize=11;shadow=0;" value="@Cacheable (HIT)" vertex="1">
+          <mxGeometry height="26" width="160" x="20" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-leg2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#5c6bc0;fontColor=#5c6bc0;fontStyle=1;fontSize=11;shadow=0;" value="@Cacheable (MISS)" vertex="1">
+          <mxGeometry height="26" width="160" x="20" y="132" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-leg3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;fontColor=#00E7FF;fontStyle=1;fontSize=11;shadow=0;" value="@CachePut" vertex="1">
+          <mxGeometry height="26" width="160" x="20" y="164" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-leg4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF007F;fontColor=#FF007F;fontStyle=1;fontSize=11;shadow=0;" value="@CacheEvict" vertex="1">
+          <mxGeometry height="26" width="160" x="20" y="196" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-leg5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;fontColor=#39FF14;fontStyle=1;fontSize=11;shadow=0;" value="Controller / Service" vertex="1">
+          <mxGeometry height="26" width="160" x="20" y="228" as="geometry" />
+        </mxCell>
+
+        <!-- Flow 8a/8b: @Cacheable (HIT vs MISS) -->
+        <mxCell id="cl-title1" parent="1" style="text;html=1;align=left;fontColor=#F7EB07;fontStyle=1;fontSize=14;strokeColor=none;fillColor=none;" value="Flow 8a / 8b: @Cacheable" vertex="1">
+          <mxGeometry height="28" width="260" x="240" y="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cl-controller" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=2;fontColor=#39FF14;fontStyle=0;fontSize=13;shadow=0;" value="[1] Controller&#xa;GET /api/users/cache-demo/{id}&#xa;calls cacheDemoService.getUser(id)" vertex="1">
+          <mxGeometry height="70" width="340" x="240" y="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cl-proxy" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=2;fontColor=#F7EB07;fontStyle=0;fontSize=13;shadow=0;" value="[2] Spring AOP Proxy&#xa;intercepts getUser() call&#xa;checks cache 'users' key=#id" vertex="1">
+          <mxGeometry height="70" width="340" x="240" y="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cl-hit" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#7986cb;strokeWidth=2;fontColor=#7986cb;fontStyle=0;fontSize=13;shadow=0;" value="[3a] CACHE HIT&#xa;Method body SKIPPED entirely&#xa;Cached value returned (~0ms)&#xa;ℹ Proof: 'MISS' log never appears" vertex="1">
+          <mxGeometry height="80" width="300" x="140" y="340" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cl-miss" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#5c6bc0;strokeWidth=2;fontColor=#5c6bc0;fontStyle=0;fontSize=13;shadow=0;" value="[3b] CACHE MISS&#xa;getUser() method body runs&#xa;Logs 'CACHE - MISS'&#xa;Simulates 500ms DB call&#xa;Result stored in cache" vertex="1">
+          <mxGeometry height="90" width="300" x="560" y="335" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cl-return" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=2;fontColor=#39FF14;fontStyle=0;fontSize=13;shadow=0;" value="[4] Controller returns HTTP 200&#xa;body.elapsedMs &lt; 100 = HIT&#xa;body.elapsedMs &gt; 400 = MISS" vertex="1">
+          <mxGeometry height="70" width="340" x="240" y="470" as="geometry" />
+        </mxCell>
+
+        <!-- Edges: @Cacheable flow -->
+        <mxCell id="cl-e1" edge="1" parent="1" source="cl-controller" target="cl-proxy" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#F7EB07;strokeWidth=1.5;endArrow=block;endFill=1;" value="call">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-e2a" edge="1" parent="1" source="cl-proxy" target="cl-hit" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#7986cb;strokeWidth=1.5;dashed=0;endArrow=block;endFill=1;" value="HIT path">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-e2b" edge="1" parent="1" source="cl-proxy" target="cl-miss" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#5c6bc0;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;" value="MISS path">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-e3a" edge="1" parent="1" source="cl-hit" target="cl-return" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#7986cb;strokeWidth=1.5;endArrow=block;endFill=1;" value="instant">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-e3b" edge="1" parent="1" source="cl-miss" target="cl-return" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#5c6bc0;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;" value="~500ms">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Flow 8c: @CachePut -->
+        <mxCell id="cl-title2" parent="1" style="text;html=1;align=left;fontColor=#F7EB07;fontStyle=1;fontSize=14;strokeColor=none;fillColor=none;" value="Flow 8c: @CachePut" vertex="1">
+          <mxGeometry height="28" width="260" x="240" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-put-ctrl" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=2;fontColor=#39FF14;fontStyle=0;fontSize=13;shadow=0;" value="[1] Controller&#xa;PUT /api/users/cache-demo/{id}?data=X" vertex="1">
+          <mxGeometry height="60" width="340" x="240" y="628" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-put-method" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=2;fontColor=#00E7FF;fontStyle=0;fontSize=13;shadow=0;" value="[2] @CachePut proxy&#xa;Method ALWAYS runs (no skip)&#xa;Executes updateUser(id, data)&#xa;Return value replaces cache entry" vertex="1">
+          <mxGeometry height="80" width="340" x="240" y="718" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-put-e1" edge="1" parent="1" source="cl-put-ctrl" target="cl-put-method" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#00E7FF;strokeWidth=1.5;endArrow=block;endFill=1;" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Flow 8d/8e: @CacheEvict -->
+        <mxCell id="cl-title3" parent="1" style="text;html=1;align=left;fontColor=#F7EB07;fontStyle=1;fontSize=14;strokeColor=none;fillColor=none;" value="Flow 8d / 8e: @CacheEvict" vertex="1">
+          <mxGeometry height="28" width="260" x="240" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-evict-ctrl" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=2;fontColor=#39FF14;fontStyle=0;fontSize=13;shadow=0;" value="[1] Controller&#xa;DELETE /api/users/cache-demo/{id}  (one entry)&#xa;DELETE /api/users/cache-demo        (all entries)" vertex="1">
+          <mxGeometry height="70" width="380" x="240" y="888" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-evict-proxy" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF007F;strokeWidth=2;fontColor=#FF007F;fontStyle=0;fontSize=13;shadow=0;" value="[2] @CacheEvict proxy&#xa;Removes key from cache 'users'&#xa;allEntries=true: clears ALL&#xa;Next GET = MISS" vertex="1">
+          <mxGeometry height="80" width="380" x="240" y="988" as="geometry" />
+        </mxCell>
+        <mxCell id="cl-evict-e1" edge="1" parent="1" source="cl-evict-ctrl" target="cl-evict-proxy" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF007F;strokeWidth=1.5;endArrow=block;endFill=1;" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Key insight annotation -->
+        <mxCell id="cl-insight" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1;fontColor=#F7EB07;fontStyle=0;fontSize=11;shadow=0;dashed=1;" value="⏱ Log observation guide:&#xa;MISS: logs 'CACHE - MISS' + ~500ms elapsed&#xa;HIT : NO 'MISS' log line + &lt;100ms elapsed&#xa;PUT : logs '@CachePut' (method always ran)&#xa;EVICT: logs '@CacheEvict' (entry removed)&#xa;&#xa;CacheManager: ConcurrentMapCacheManager (simple, in-memory)&#xa;Cache name: 'users' | Key: #id (SpEL)&#xa;Switch cache.type=redis in production for TTL + clustering" vertex="1">
+          <mxGeometry height="140" width="420" x="620" y="628" as="geometry" />
+        </mxCell>
+
       </root>
     </mxGraphModel>
   </diagram>

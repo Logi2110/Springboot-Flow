@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mxfile host="app.diagrams.net" modified="2026-03-02T00:00:00.000Z" agent="Spring Boot Flow Generator" etag="spring-boot-layered-flow" version="21.7.5">
   <diagram name="Spring Boot Layered Architecture Flow" id="spring-boot-layered-architecture-flow">
-    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -88,9 +88,44 @@
           <mxGeometry x="290" y="40" width="110" height="50" as="geometry" />
         </mxCell>
         
+        <!-- Cache Layer -->
+        <mxCell id="cache-layer" value="💾 Cache Layer (@Cacheable / @CachePut / @CacheEvict)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e8eaf6;strokeColor=#3949ab;fontSize=16;fontStyle=1;startSize=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="860" width="1120" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cache-hit" value="💾 @Cacheable HIT&#xa;• Spring intercepts BEFORE method&#xa;• Returns cached value instantly&#xa;• Method body never runs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#5c6bc0;strokeColor=#3949ab;strokeWidth=2;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="cache-layer">
+          <mxGeometry x="100" y="55" width="190" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cache-miss" value="💾 @Cacheable MISS&#xa;• Method runs (~500ms DB call)&#xa;• Result stored in cache&#xa;• Next call will be a HIT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7986cb;strokeColor=#3949ab;strokeWidth=2;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="cache-layer">
+          <mxGeometry x="320" y="55" width="190" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cache-put" value="💾 @CachePut&#xa;• Method ALWAYS runs&#xa;• Updates cache after write&#xa;• Key must match @Cacheable" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9fa8da;strokeColor=#3949ab;strokeWidth=2;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="cache-layer">
+          <mxGeometry x="540" y="55" width="190" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cache-evict" value="💾 @CacheEvict&#xa;• Removes entry from cache&#xa;• allEntries=true: clears all&#xa;• Next GET will be a MISS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c5cae9;strokeColor=#3949ab;strokeWidth=2;fontColor=#333333;fontSize=11;fontStyle=1;" vertex="1" parent="cache-layer">
+          <mxGeometry x="760" y="55" width="190" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- Cache connections -->
+        <mxCell id="cache-conn1" edge="1" parent="1" source="service-logic" target="cache-hit" style="strokeColor=#3949ab;strokeWidth=2;" value="@Cacheable">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cache-conn2" edge="1" parent="1" source="service-logic" target="cache-miss" style="strokeColor=#3949ab;strokeWidth=2;dashed=1;" value="MISS path">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cache-conn3" edge="1" parent="1" source="service-logic" target="cache-put" style="strokeColor=#3949ab;strokeWidth=2;dashed=1;" value="@CachePut">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cache-conn4" edge="1" parent="1" source="service-logic" target="cache-evict" style="strokeColor=#3949ab;strokeWidth=2;dashed=1;" value="@CacheEvict">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
         <!-- Exception Handling -->
         <mxCell id="exception-layer" value="🔴 Exception Handling" style="swimlane;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c2185b;fontSize=16;fontStyle=1;startSize=40;" vertex="1" parent="1">
-          <mxGeometry x="400" y="880" width="400" height="120" as="geometry" />
+          <mxGeometry x="400" y="1020" width="400" height="120" as="geometry" />
         </mxCell>
         
         <mxCell id="exception-handler" value="❌ GlobalExceptionHandler&#xa;• Error mapping&#xa;• Error responses" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fd79a8;strokeColor=#e84393;strokeWidth=2;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="exception-layer">
