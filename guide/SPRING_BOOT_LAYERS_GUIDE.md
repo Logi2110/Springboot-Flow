@@ -249,14 +249,62 @@ HTTP Request
 
 ---
 
-### 9. Internal Spring MVC Layers *(transparent — always active, no code needed)*
+### ~~9. Internal Spring MVC Layers~~ ✅ Added (Flow 10)
 
 | Layer | Component | Role |
 |---|---|---|
-| **DispatcherServlet** | Built-in | Front controller — routes requests to handlers |
-| **HandlerMapping** | Built-in | Decides which controller handles the request |
-| **HandlerAdapter** | Built-in | Calls the controller method with resolved parameters |
-| **ViewResolver** | Built-in | Resolves view names to templates (Thymeleaf, etc.) |
+| **DispatcherServlet** | Built-in | Front controller — orchestrates the entire pipeline below |
+| **HandlerMapping** | `mvc/MvcInternalsHandlerMapping.java` | Maps `GET /api/users/flow10` → `CustomMvcHandler` |
+| **HandlerAdapter** | `mvc/MvcInternalsHandlerAdapter.java` | Executes `CustomMvcHandler`, returns `ModelAndView("flow10-view")` |
+| **ViewResolver** | `mvc/MvcInternalsViewResolver.java` | Resolves `"flow10-view"` → inner `JsonView` |
+| **View** | `MvcInternalsViewResolver.JsonView` | Serialises model to JSON and writes HTTP response |
+
+**Flow 10** (triggered by `GET /api/users/flow10` — no auth needed):
+```
+DispatcherServlet.doDispatch(request)
+     │
+     ├─ [1] iterates HandlerMapping beans in @Order sequence
+     │        MvcInternalsHandlerMapping.getHandler()   → path matches → returns CustomMvcHandler
+     │
+     ├─ [2] iterates HandlerAdapter beans — calls supports(handler)
+     │        MvcInternalsHandlerAdapter.supports()     → TRUE (instanceof CustomMvcHandler)
+     │        MvcInternalsHandlerAdapter.handle()       → invokes CustomMvcHandler.execute()
+     │                                                  → returns ModelAndView("flow10-view")
+     │
+     ├─ [3] iterates ViewResolver beans — calls resolveViewName("flow10-view")
+     │        MvcInternalsViewResolver.resolveViewName() → MATCHED → returns JsonView
+     │
+     └─ [4] JsonView.render(model, request, response)  → writes JSON body
+```
+
+**Key insight — why @RestController bypasses ViewResolver:**
+```
+@RestController + @ResponseBody path:
+   RequestMappingHandlerAdapter.handle()
+        → detects @ResponseBody annotation
+        → writes response directly via HttpMessageConverter
+        → returns null ModelAndView
+   DispatcherServlet sees null → skips ViewResolver + View entirely
+
+Our custom path (Flow 10):
+   MvcInternalsHandlerAdapter.handle()
+        → returns real ModelAndView("flow10-view")
+   DispatcherServlet sees view name → calls ViewResolver → calls View.render()
+```
+
+**Log output when calling `GET /api/users/flow10`:**
+```
+🗺️  [HANDLER MAPPING]  MvcInternalsHandlerMapping.getHandler() path='/api/users/flow10'
+🗺️  [HANDLER MAPPING]  MATCHED path='/api/users/flow10' → returning CustomMvcHandler
+🔧  [HANDLER ADAPTER]  MvcInternalsHandlerAdapter.supports() → TRUE
+🔧  [HANDLER ADAPTER]  MvcInternalsHandlerAdapter.handle()  — invoking CustomMvcHandler
+⚙️  [HANDLER]          CustomMvcHandler.execute() — business logic running
+🔧  [HANDLER ADAPTER]  returning ModelAndView(viewName='flow10-view')
+👁️  [VIEW RESOLVER]    MvcInternalsViewResolver.resolveViewName('flow10-view')
+👁️  [VIEW RESOLVER]    MATCHED viewName='flow10-view' → returning JsonView
+🎨  [VIEW RENDER]      JsonView.render() — writing JSON response body
+🎨  [VIEW RENDER]      response written — DispatcherServlet pipeline complete
+```
 
 ---
 

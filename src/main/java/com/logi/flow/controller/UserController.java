@@ -39,6 +39,7 @@ import java.util.Map;
  * Flow 7 - GET /event-demo   : Event chain only — publishes UserProcessedEvent, observe sync + async listeners
  * Flow 8 - GET/PUT/DELETE /cache-demo/{id} : Caching Layer — @Cacheable / @CachePut / @CacheEvict
  * Flow 9 - GET /secure/*                   : Security Layer — SecurityFilterChain / @PreAuthorize / @PostAuthorize
+ * Flow 10- GET /flow10                       : MVC Internals — custom HandlerMapping + HandlerAdapter + ViewResolver + View
  */
 @RestController
 @RequestMapping("/api/users")
@@ -411,4 +412,14 @@ public class UserController {
         logger.info("📋 5. CONTROLLER - RETURNING: secureMethodOwned() (if @PostAuthorize allows it)");
         return ResponseEntity.ok(result);
     }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // FLOW 10: MVC Internals — see mvc/ package for the actual implementation
+    // This endpoint is NOT handled here — it is served by:
+    //   MvcInternalsHandlerMapping  → maps /api/users/flow10 → CustomMvcHandler
+    //   MvcInternalsHandlerAdapter  → executes CustomMvcHandler
+    //   MvcInternalsViewResolver    → resolves 'flow10-view' → JsonView
+    //   JsonView                    → writes JSON response
+    // Calling GET /api/users/flow10 will NOT hit this controller at all.
+    // ─────────────────────────────────────────────────────────────────────────────
 }
