@@ -479,6 +479,293 @@
       ]
     },
     {
+      "name": "Flow 9 — Security Layer (SecurityFilterChain / @PreAuthorize / @PostAuthorize)",
+      "description": "FLOW 9 — Security Layer demo. Tests URL-level rules (SecurityFilterChain) and method-level rules (@PreAuthorize / @PostAuthorize).\n\nDemo users:\n  user  / pass123  → ROLE_USER\n  admin / admin123 → ROLE_USER + ROLE_ADMIN\n\nRecommended sequence:\n  9a — public   : no auth           → 200\n  9b — user-only: user:pass123      → 200  (authenticated)\n  9b — user-only: no auth           → 401  (unauthenticated)\n  9c — admin-only: admin:admin123   → 200  (ROLE_ADMIN)\n  9c — admin-only: user:pass123     → 403  (ROLE_USER, URL-level block)\n  9d — method-owned owner=user: user:pass123  → 200  (@PostAuthorize owner==caller)\n  9d — method-owned owner=admin: user:pass123 → 403  (@PostAuthorize blocks different owner)\n  9d — method-owned owner=user: admin:admin123→ 200  (@PostAuthorize hasRole(ADMIN) passes)\n\nAuth: HTTP Basic — set Authorization header to Basic base64(username:password).",
+      "item": [
+        {
+          "name": "Flow 9a — Public (no auth required)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/secure/public",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "secure", "public"]
+            },
+            "description": "FLOW 9a — SecurityFilterChain permitAll.\n\nNo credentials required. SecurityFilterChain URL rule: .requestMatchers('/secure/public').permitAll().\n\nStack: SecurityFilterChain (permitAll) → LoggingFilter → Interceptor → AOP → Controller → SecuredDemoService.getPublicData() → 200"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 — no auth needed\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"Public data returned\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.security).to.eql('none');",
+                  "    pm.expect(json.data).to.include('Public');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 9b — User-Only (ROLE_USER or ROLE_ADMIN) — user credentials",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic dXNlcjpwYXNzMTIz",
+                "description": "user:pass123 encoded in Base64",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/secure/user-only",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "secure", "user-only"]
+            },
+            "description": "FLOW 9b — SecurityFilterChain authenticated() + @PreAuthorize(isAuthenticated).\n\nCredentials: user / pass123 (ROLE_USER).\nAuthorization: Basic dXNlcjpwYXNzMTIz   (base64 of 'user:pass123')\n\nStack: SecurityFilterChain (authenticated ✓) → Interceptor → AOP → Controller → @PreAuthorize(isAuthenticated ✓) → SecuredDemoService → 200"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 — user credentials accepted\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"@PreAuthorize confirmed\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.caller).to.eql('user');",
+                  "    pm.expect(json.annotation).to.eql('@PreAuthorize');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 9b — User-Only — NO credentials → 401",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/secure/user-only",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "secure", "user-only"]
+            },
+            "description": "FLOW 9b exception branch — no Authorization header.\n\nSecurityFilterChain rejects BEFORE the request reaches the controller.\n401 Unauthorized is returned by Spring Security's BasicAuthenticationEntryPoint."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 401 — no credentials\", () => pm.response.to.have.status(401));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 9c — Admin-Only — admin credentials → 200",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic YWRtaW46YWRtaW4xMjM=",
+                "description": "admin:admin123 encoded in Base64",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/secure/admin-only",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "secure", "admin-only"]
+            },
+            "description": "FLOW 9c — SecurityFilterChain hasRole('ADMIN') + @PreAuthorize(hasRole('ADMIN')).\n\nCredentials: admin / admin123 (ROLE_USER + ROLE_ADMIN).\nAuthorization: Basic YWRtaW46YWRtaW4xMjM=  (base64 of 'admin:admin123')\n\nStack: SecurityFilterChain (hasRole ADMIN ✓) → @PreAuthorize(hasRole ADMIN ✓) → SecuredDemoService → 200"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 — admin credentials accepted\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"@PreAuthorize ADMIN confirmed\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.caller).to.eql('admin');",
+                  "    pm.expect(json.annotation).to.eql('@PreAuthorize');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 9c — Admin-Only — user credentials → 403",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic dXNlcjpwYXNzMTIz",
+                "description": "user:pass123 encoded in Base64",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/secure/admin-only",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "secure", "admin-only"]
+            },
+            "description": "FLOW 9c exception branch — wrong role.\n\nCredentials: user / pass123 (ROLE_USER only).\nAuthenticated ✓ but not ROLE_ADMIN → SecurityFilterChain returns 403 Forbidden before controller runs."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 403 — authenticated but not ROLE_ADMIN\", () => pm.response.to.have.status(403));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 9d — @PostAuthorize — caller owns resource → 200",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic dXNlcjpwYXNzMTIz",
+                "description": "user:pass123",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/secure/method-owned?owner=user",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "secure", "method-owned"],
+              "query": [
+                { "key": "owner", "value": "user" }
+              ]
+            },
+            "description": "FLOW 9d — @PostAuthorize(owner==caller or ROLE_ADMIN).\n\nCredentials: user / pass123. Requesting owner=user (same as caller).\n@PostAuthorize SpEL: returnObject.get('owner') == authentication.name → TRUE → 200\n\nKey insight: the method body ALWAYS runs first; @PostAuthorize checks the return value AFTER."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 — owner matches caller\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"@PostAuthorize confirmed\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.owner).to.eql('user');",
+                  "    pm.expect(json.annotation).to.eql('@PostAuthorize');",
+                  "    pm.expect(json.note).to.include('already ran');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 9d — @PostAuthorize — caller requests other owner → 403",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic dXNlcjpwYXNzMTIz",
+                "description": "user:pass123",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/secure/method-owned?owner=admin",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "secure", "method-owned"],
+              "query": [
+                { "key": "owner", "value": "admin" }
+              ]
+            },
+            "description": "FLOW 9d exception branch — @PostAuthorize denies access.\n\nCredentials: user / pass123 (ROLE_USER). Requesting owner=admin (different from caller).\nMethod body runs, then @PostAuthorize: returnObject.get('owner')='admin' != authentication.name='user' AND no ROLE_ADMIN → 403.\n\nKey insight: method already executed — @PostAuthorize only prevents the caller from seeing the result."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 403 — @PostAuthorize owner mismatch\", () => pm.response.to.have.status(403));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 9d — @PostAuthorize — admin requests any owner → 200",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic YWRtaW46YWRtaW4xMjM=",
+                "description": "admin:admin123",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/secure/method-owned?owner=user",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "secure", "method-owned"],
+              "query": [
+                { "key": "owner", "value": "user" }
+              ]
+            },
+            "description": "FLOW 9d admin path — @PostAuthorize hasRole('ADMIN') bypasses owner check.\n\nCredentials: admin / admin123 (ROLE_ADMIN). Requesting owner=user (different from caller).\n@PostAuthorize: owner != admin BUT hasRole('ADMIN') → TRUE → 200."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 — admin bypasses owner check\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"Data returned for different owner\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.owner).to.eql('user');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Exception Paths",
       "description": "Requests that intentionally trigger exception branches to demonstrate exception handler routing.",
       "item": [

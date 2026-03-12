@@ -186,7 +186,38 @@
         <mxCell id="exception-connection5" edge="1" parent="1" source="exception-handler" target="interceptor-after" style="dashed=1;strokeColor=#e84393;strokeWidth=2;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        
+
+        <!-- Security Layer -->
+        <mxCell id="security-layer" value="&#x1f512; Security Layer (@EnableWebSecurity / @PreAuthorize / @PostAuthorize)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=16;fontStyle=1;startSize=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1160" width="1120" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="sec-filter-chain" value="&#x1f512; SecurityFilterChain&#xa;&#x2022; HTTP Basic auth&#xa;&#x2022; URL-level rules&#xa;&#x2022; Runs before LoggingFilter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ce93d8;strokeColor=#7b1fa2;strokeWidth=2;fontColor=#000000;fontSize=11;fontStyle=1;" vertex="1" parent="security-layer">
+          <mxGeometry x="60" y="55" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sec-userdetails" value="&#x1f512; UserDetailsService&#xa;&#x2022; InMemoryUserDetailsManager&#xa;&#x2022; user / admin accounts&#xa;&#x2022; BCryptPasswordEncoder" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ba68c8;strokeColor=#7b1fa2;strokeWidth=2;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="security-layer">
+          <mxGeometry x="300" y="55" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sec-preauth" value="&#x1f512; @PreAuthorize&#xa;&#x2022; SpEL evaluated BEFORE method&#xa;&#x2022; hasRole('ADMIN') / isAuthenticated()&#xa;&#x2022; 403 if denied (method never runs)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ab47bc;strokeColor=#7b1fa2;strokeWidth=2;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="security-layer">
+          <mxGeometry x="540" y="55" width="230" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sec-postauth" value="&#x1f512; @PostAuthorize&#xa;&#x2022; SpEL evaluated AFTER method&#xa;&#x2022; returnObject.get('owner') == name&#xa;&#x2022; 403 if denied (method already ran)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9c27b0;strokeColor=#7b1fa2;strokeWidth=2;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="security-layer">
+          <mxGeometry x="810" y="55" width="230" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Security connections -->
+        <mxCell id="sec-conn1" edge="1" parent="1" source="filter-before" target="sec-filter-chain" style="strokeColor=#7b1fa2;strokeWidth=2;dashed=1;" value="secures request">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sec-conn2" edge="1" parent="1" source="sec-filter-chain" target="sec-userdetails" style="strokeColor=#7b1fa2;strokeWidth=1.5;" value="loads user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sec-conn3" edge="1" parent="1" source="service-aop-before" target="sec-preauth" style="strokeColor=#7b1fa2;strokeWidth=2;dashed=1;" value="@PreAuthorize">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sec-conn4" edge="1" parent="1" source="service-aop-after" target="sec-postauth" style="strokeColor=#7b1fa2;strokeWidth=2;dashed=1;" value="@PostAuthorize">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
       </root>
     </mxGraphModel>
   </diagram>

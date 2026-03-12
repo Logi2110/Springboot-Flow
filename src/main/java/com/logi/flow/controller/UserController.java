@@ -8,6 +8,7 @@ import com.logi.flow.event.UserProcessedEvent;
 import com.logi.flow.resolver.InjectRequestInfo;
 import com.logi.flow.resolver.RequestInfo;
 import com.logi.flow.service.CacheDemoService;
+import com.logi.flow.service.SecuredDemoService;
 import com.logi.flow.service.UserService;
 import com.logi.flow.startup.StartupInfoStore;
 import jakarta.validation.Valid;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +38,7 @@ import java.util.Map;
  * Flow 6 - GET /async-demo   : @Async fire-and-forget — returns 202, task finishes ~2s later
  * Flow 7 - GET /event-demo   : Event chain only — publishes UserProcessedEvent, observe sync + async listeners
  * Flow 8 - GET/PUT/DELETE /cache-demo/{id} : Caching Layer — @Cacheable / @CachePut / @CacheEvict
+ * Flow 9 - GET /secure/*                   : Security Layer — SecurityFilterChain / @PreAuthorize / @PostAuthorize
  */
 @RestController
 @RequestMapping("/api/users")
@@ -58,6 +62,9 @@ public class UserController {
 
     @Autowired
     private CacheDemoService cacheDemoService;
+
+    @Autowired
+    private SecuredDemoService securedDemoService;
 
     /**
      * VALIDATION LAYER — DataBinder
@@ -317,5 +324,91 @@ public class UserController {
                 "annotation", "@CacheEvict(allEntries=true)",
                 "hint",       "ALL entries cleared. Every GET /api/users/cache-demo/{id} will be a MISS until re-populated."
         ));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // FLOW 9: Security Layer — SecurityFilterChain / @PreAuthorize / @PostAuthorize
+    // ─────────────────────────────────────────────────────────────────────────────
+
+    /**
+     * FLOW 9a: Public endpoint — SecurityFilterChain permitAll
+     *
+     * SecurityFilterChain URL rule: .requestMatchers("/api/users/secure/public").permitAll()
+     * No credentials required. Demonstrates that security is selectively applied.
+     */
+    @GetMapping("/secure/public")
+    public ResponseEntity<Map<String, Object>> securePublic() {
+        logger.info("📋 3. CONTROLLER - EXECUTING: securePublic() | No auth required (permitAll)");
+        Map<String, Object> result = securedDemoService.getPublicData();
+        logger.info("📋 5. CONTROLLER - RETURNING: securePublic()");
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * FLOW 9b: User-only endpoint — URL-level rule: authenticated()
+     *
+     * SecurityFilterChain: .requestMatchers("/api/users/secure/user-only").authenticated()
+     * Any valid credentials (ROLE_USER or ROLE_ADMIN) pass.
+     * No credentials or wrong credentials → 401 Unauthorized before reaching this method.
+     *
+     * @param userDetails  injected by Spring Security — contains logged-in user info
+     */
+    @GetMapping("/secure/user-only")
+    public ResponseEntity<Map<String, Object>> secureUserOnly(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        String caller = userDetails.getUsername();
+        logger.info("📋 3. CONTROLLER - EXECUTING: secureUserOnly() caller='{}' roles={}",
+                caller, userDetails.getAuthorities());
+        Map<String, Object> result = securedDemoService.getUserData(caller);
+        logger.info("📋 5. CONTROLLER - RETURNING: secureUserOnly() caller='{}'", caller);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * FLOW 9c: Admin-only endpoint — URL-level rule: hasRole('ADMIN')
+     *
+     * SecurityFilterChain: .requestMatchers("/api/users/secure/admin-only").hasRole("ADMIN")
+     * ROLE_USER credentials → 403 Forbidden (authenticated but not authorized).
+     * ROLE_ADMIN credentials → 200 OK.
+     *
+     * Also enforced by @PreAuthorize on the service method (double guard for demo).
+     *
+     * @param userDetails  injected by Spring Security
+     */
+    @GetMapping("/secure/admin-only")
+    public ResponseEntity<Map<String, Object>> secureAdminOnly(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        String caller = userDetails.getUsername();
+        logger.info("📋 3. CONTROLLER - EXECUTING: secureAdminOnly() caller='{}'", caller);
+        Map<String, Object> result = securedDemoService.getAdminData(caller);
+        logger.info("📋 5. CONTROLLER - RETURNING: secureAdminOnly() caller='{}'", caller);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * FLOW 9d: @PostAuthorize demo — method-level ownership check
+     *
+     * URL permits any authenticated user accessing this path.
+     * The service method is annotated with:
+     *   @PostAuthorize("returnObject.get('owner') == authentication.name or hasRole('ADMIN')")
+     *
+     * Key insight: the method body ALWAYS runs first, then Spring checks the return value.
+     *   - Caller requests owner=alice: 200 only if logged in as 'alice' or as 'admin'
+     *   - Logged in as 'user' requesting owner=admin: 403 Forbidden (method ran, result blocked)
+     *
+     * @param owner        the username to fetch data for
+     * @param userDetails  injected by Spring Security
+     */
+    @GetMapping("/secure/method-owned")
+    public ResponseEntity<Map<String, Object>> secureMethodOwned(
+            @RequestParam String owner,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        String caller = userDetails.getUsername();
+        logger.info("📋 3. CONTROLLER - EXECUTING: secureMethodOwned() caller='{}' requestedOwner='{}'",
+                caller, owner);
+        // @PostAuthorize on this service method checks returnObject.owner == caller or ADMIN
+        Map<String, Object> result = securedDemoService.getOwnedData(owner);
+        logger.info("📋 5. CONTROLLER - RETURNING: secureMethodOwned() (if @PostAuthorize allows it)");
+        return ResponseEntity.ok(result);
     }
 }

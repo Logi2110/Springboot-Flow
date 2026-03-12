@@ -28,6 +28,7 @@
 | **@Async Service** | `event/AsyncDemoService.java` | Fire-and-forget background task (Flow 6) |
 | **@Scheduled** | `event/ScheduledDemoTask.java` | Fires every 2 minutes — fixedRate demo |
 | **Cache** | `service/CacheDemoService.java` | `@Cacheable` / `@CachePut` / `@CacheEvict` — in-memory cache (Flow 8) |
+| **Security** | `config/SecurityConfig.java`, `service/SecuredDemoService.java` | `@EnableWebSecurity`, `@PreAuthorize`, `@PostAuthorize`, HTTP Basic (Flow 9) |
 
 ---
 
@@ -161,13 +162,68 @@ Controller calls asyncDemoService.runAsync()
 
 ---
 
-### 7. Security Layer *(requires Spring Security dependency)*
+### ~~7. Security Layer~~ ✅ Added
 
-| Layer | Component | When Used |
+| Layer | Location | Purpose |
 |---|---|---|
-| **Security Filter Chain** | `SecurityFilterChain` | Runs before your `LoggingFilter` — authentication, JWT, OAuth2 |
-| **UserDetailsService** | `UserDetailsService` | Load user credentials for authentication |
-| **Method Security** | `@PreAuthorize`, `@PostAuthorize` | Fine-grained role/permission checks at method level |
+| **SecurityConfig** | `config/SecurityConfig.java` | `@EnableWebSecurity` + `@EnableMethodSecurity`, SecurityFilterChain, BCrypt |
+| **SecuredDemoService** | `service/SecuredDemoService.java` | `@PreAuthorize` / `@PostAuthorize` method security demos |
+| **UserDetailsService** | inside `SecurityConfig` | `InMemoryUserDetailsManager` — two demo accounts |
+
+**Demo Users:**
+
+| Username | Password | Roles |
+|---|---|---|
+| `user` | `pass123` | `ROLE_USER` |
+| `admin` | `admin123` | `ROLE_USER` + `ROLE_ADMIN` |
+
+**Endpoints added (Flow 9):**
+
+| Endpoint | Rule | Expected Result |
+|---|---|---|
+| `GET /api/users/secure/public` | `permitAll` | 200 — no credentials needed |
+| `GET /api/users/secure/user-only` | `authenticated()` | 200 with creds, 401 without |
+| `GET /api/users/secure/admin-only` | `hasRole('ADMIN')` | 200 admin, 403 user, 401 anon |
+| `GET /api/users/secure/method-owned?owner=X` | `@PostAuthorize` | 200 own data / ADMIN, 403 other |
+
+```
+🔒 Security Layer execution order:
+
+HTTP Request
+     │
+     ▼
+🔒 SecurityFilterChain (HTTP Basic)    ← URL-level auth/authz — runs BEFORE LoggingFilter
+     │  • 401 if missing / bad credentials
+     │  • 403 if authenticated but role insufficient (URL rule)
+     │  • Sets SecurityContext for the thread
+     ▼
+🔥 LoggingFilter → Interceptor → AOP → Controller → Service
+     │
+     ▼
+🔒 @PreAuthorize (hasRole SpEL)        ← evaluated BEFORE method body
+     │  • TRUE  → method runs, 200 OK
+     │  • FALSE → AccessDeniedException → 403 (method never ran)
+     ▼
+🔒 @PostAuthorize (returnObject SpEL)  ← evaluated AFTER method body
+     │  • TRUE  → caller receives result, 200 OK
+     │  • FALSE → AccessDeniedException → 403 (method already ran!)
+```
+
+> 💡 `@PreAuthorize` guards by role **before** the method executes. `@PostAuthorize` guards by **what the method returned** — the method body always runs first.
+
+> 💡 HTTP Basic credentials in Base64 — use these in Postman:
+> - `user:pass123`   → `Basic dXNlcjpwYXNzMTIz`
+> - `admin:admin123` → `Basic YWRtaW46YWRtaW4xMjM=`
+
+**Recommended Postman sequence (Flow 9 folder):**
+1. 9a — public (no auth) → expect 200
+2. 9b — user-only with `user:pass123` → expect 200
+3. 9b — user-only no auth → expect 401
+4. 9c — admin-only with `admin:admin123` → expect 200
+5. 9c — admin-only with `user:pass123` → expect 403
+6. 9d — method-owned `owner=user` as `user` → expect 200 (`@PostAuthorize` passes)
+7. 9d — method-owned `owner=admin` as `user` → expect 403 (`@PostAuthorize` blocks)
+8. 9d — method-owned `owner=user` as `admin` → expect 200 (ADMIN bypass)
 
 ---
 
@@ -292,7 +348,7 @@ Browser Response
 | ✅ Done | **Custom Validator** | Added — `validation/DepartmentValidator.java` + `@InitBinder` in `UserController` |
 | ✅ Done | **Event Publisher + Listener** | Added — `event/UserEventListener.java`, `UserProcessedEvent.java` |
 | ✅ Done | **@Async + @Scheduled** | Added — `event/AsyncDemoService.java`, `ScheduledDemoTask.java` |
-| 🟢 Low | **Spring Security** | When auth is required |
+| ✅ Done | **Spring Security** | Added — `config/SecurityConfig.java` + `service/SecuredDemoService.java` — HTTP Basic, `@PreAuthorize`, `@PostAuthorize` (Flow 9) |
 | ✅ Done | **Bean Lifecycle** | Added — `lifecycle/BeanLifecycleDemoBean.java`, `FlowBeanPostProcessor`, `FlowBeanFactoryPostProcessor` |
 | ✅ Done | **Startup Layer** | Added — `startup/StartupApplicationRunner.java`, `StartupEnvironmentPostProcessor.java`, `StartupInfoStore.java` |
 | ✅ Done | **Caching Layer** | Added — `service/CacheDemoService.java` — `@Cacheable` / `@CachePut` / `@CacheEvict` (Flow 8) |
@@ -337,3 +393,45 @@ Browser Response
 🎯 5a. AOP - @AfterReturning / @After / @Around AFTER
 🚀 6.  INTERCEPTOR - postHandle / afterCompletion
 🔥 7.  FILTER - AFTER
+
+### Flow 9: Security Layer Demo (GET /api/users/secure/*)
+
+**9a — Public endpoint (no auth)**
+🔒 1.  SECURITY FILTER CHAIN - permitAll, no credentials required
+🔥 2.  FILTER - BEFORE
+🚀 3.  INTERCEPTOR - preHandle
+📋 4.  CONTROLLER - securePublic() — calls securedDemoService.getPublicData()
+🔒 5.  NO @PreAuthorize or @PostAuthorize — method runs freely
+📋 6.  CONTROLLER - RETURNING: 200 OK
+🔥 7.  FILTER - AFTER
+
+**9b — User-only endpoint (any authenticated user)**
+🔒 1.  SECURITY FILTER CHAIN - validates Basic dXNlcjpwYXNzMTIz
+              ├─ Missing creds → 401 Unauthorized (request stops here)
+              └─ Valid → SecurityContext populated with user / ROLE_USER
+🔥 2.  FILTER - BEFORE
+📋 3.  CONTROLLER - secureUserOnly(@AuthenticationPrincipal UserDetails)
+🔒 4.  @PreAuthorize isAuthenticated() — TRUE, method runs
+📋 5.  CONTROLLER - RETURNING: 200 OK with username
+🔥 6.  FILTER - AFTER
+
+**9c — Admin-only endpoint (ROLE_ADMIN required)**
+🔒 1.  SECURITY FILTER CHAIN - URL rule hasRole('ADMIN')
+              ├─ No creds          → 401 Unauthorized
+              ├─ ROLE_USER only    → 403 Forbidden (request stops at URL rule)
+              └─ ROLE_ADMIN       → SecurityContext populated
+🔥 2.  FILTER - BEFORE
+📋 3.  CONTROLLER - secureAdminOnly() — calls securedDemoService.getAdminData()
+🔒 4.  @PreAuthorize hasRole('ADMIN') — TRUE, method runs
+📋 5.  CONTROLLER - RETURNING: 200 OK with admin data
+🔥 6.  FILTER - AFTER
+
+**9d — Method-owned endpoint (@PostAuthorize demo)**
+🔒 1.  SECURITY FILTER CHAIN - authenticated() check passes
+🔥 2.  FILTER - BEFORE
+📋 3.  CONTROLLER - secureMethodOwned(?owner=X) — calls securedDemoService.getOwnedData(owner)
+🔒 4.  METHOD BODY ALWAYS RUNS — returns Map{owner, data}
+🔒 5.  @PostAuthorize SpEL: returnObject.get('owner') == authentication.name OR hasRole('ADMIN')
+              ├─ TRUE  → caller receives result, 200 OK
+              └─ FALSE → AccessDeniedException → 403 (method already ran!)
+🔥 6.  FILTER - AFTER
