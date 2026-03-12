@@ -4,9 +4,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 
 import java.util.Map;
 
@@ -25,25 +27,31 @@ import java.util.Map;
  *   - SimpleControllerHandlerAdapter → legacy Controller interface (handleRequest method)
  *   - HttpRequestHandlerAdapter      → HttpRequestHandler (e.g. static resource servlet)
  *
- * This adapter supports only CustomMvcHandler and invokes it, then returns a
- * ModelAndView so that the ViewResolver step fires next.
+ * WHY we drive ViewResolver + View explicitly here (not via returned ModelAndView):
+ *   Spring Boot registers ContentNegotiatingViewResolver at Ordered.HIGHEST_PRECEDENCE.
+ *   It collects ALL ViewResolver candidates and picks the best based on Accept header.
+ *   If content-type negotiation fails, InternalResourceViewResolver wins and forwards
+ *   to "flow10-view" as a relative URL → "/api/users/flow10-view" → 500 error.
  *
- * Key insight: @RestController methods NEVER produce a ModelAndView.
- * RequestMappingHandlerAdapter detects @ResponseBody and writes directly via
- * HttpMessageConverter — ViewResolver is skipped entirely.
- * Here we return a ModelAndView explicitly so you can see the resolver step.
+ *   Driving the pipeline explicitly avoids that race. It also mirrors exactly what
+ *   RequestMappingHandlerAdapter does for @RestController: write the response and
+ *   return null — DispatcherServlet sees no ModelAndView and skips its ViewResolver loop.
  *
  * Execution position in Flow 10:
  *   [1] DispatcherServlet.doDispatch()
  *   [2] HandlerMapping.getHandler()
  *        → [3] THIS.handle(request, response, handler)  ← you are here
- *   [4] ViewResolver.resolveViewName(...)
- *   [5] View.render(...)
+ *              → [4] viewResolver.resolveViewName(...)   (called explicitly below)
+ *              → [5] view.render(...)                    (called explicitly below)
+ *              → returns null — response already written, DispatcherServlet skips its own view loop
  */
 @Component
 public class MvcInternalsHandlerAdapter implements HandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(MvcInternalsHandlerAdapter.class);
+
+    @Autowired
+    private MvcInternalsViewResolver viewResolver;
 
     /**
      * Called by DispatcherServlet to check whether this adapter can execute the given handler.
@@ -59,11 +67,15 @@ public class MvcInternalsHandlerAdapter implements HandlerAdapter {
     }
 
     /**
-     * Called by DispatcherServlet to execute the handler and produce a ModelAndView.
+     * Called by DispatcherServlet to execute the handler and produce (optionally) a ModelAndView.
      *
-     * For @ResponseBody methods, RequestMappingHandlerAdapter writes the response
-     * directly here and returns null (or an empty ModelAndView) — skipping ViewResolver.
-     * We return a named ModelAndView to demonstrate the ViewResolver step.
+     * We explicitly drive steps 4 and 5 here, then return null so DispatcherServlet
+     * does NOT run its own ViewResolver loop (which would let ContentNegotiatingViewResolver
+     * interfere and potentially forward to the wrong URL).
+     *
+     * This is identical in spirit to how @RestController works:
+     *   RequestMappingHandlerAdapter writes the response body via HttpMessageConverter
+     *   and returns null — DispatcherServlet skips ViewResolver entirely.
      */
     @Override
     public ModelAndView handle(HttpServletRequest request,
@@ -71,14 +83,21 @@ public class MvcInternalsHandlerAdapter implements HandlerAdapter {
                                Object handler) throws Exception {
         log.info("  🔧 [HANDLER ADAPTER] MvcInternalsHandlerAdapter.handle() — invoking CustomMvcHandler");
 
+        // Step 3 — execute the handler's business logic
         CustomMvcHandler customHandler = (CustomMvcHandler) handler;
         Map<String, Object> data = customHandler.execute(request);
 
-        // ModelAndView(viewName, modelAttributeName, modelValue)
-        // DispatcherServlet will pass "flow10-view" to ViewResolver next
-        ModelAndView mav = new ModelAndView("flow10-view", "data", data);
-        log.info("  🔧 [HANDLER ADAPTER] returning ModelAndView(viewName='flow10-view') → ViewResolver will resolve");
-        return mav;
+        // Step 4 — explicitly call ViewResolver (same call DispatcherServlet would make)
+        log.info("  🔧 [HANDLER ADAPTER] step 4 — calling viewResolver.resolveViewName('flow10-view')");
+        View view = viewResolver.resolveViewName("flow10-view", request.getLocale());
+
+        // Step 5 — explicitly call View.render() (same call DispatcherServlet would make)
+        log.info("  🔧 [HANDLER ADAPTER] step 5 — calling view.render(model, request, response)");
+        view.render(Map.of("data", data), request, response);
+
+        // Return null: response is committed. DispatcherServlet will skip its ViewResolver loop.
+        log.info("  🔧 [HANDLER ADAPTER] returning null (response already written) — DispatcherServlet skips ViewResolver");
+        return null;
     }
 
     @Override

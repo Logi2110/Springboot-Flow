@@ -22,7 +22,7 @@ import org.springframework.web.servlet.HandlerMapping;
  *   3. RouterFunctionMapping         — maps WebFlux-style RouterFunction routes
  *   4. WelcomePageHandlerMapping     — maps "/" → welcome page (index.html)
  *
- * This custom HandlerMapping runs first (@Order(1)) and exclusively handles
+ * This custom HandlerMapping runs first (@Order(-1)) and exclusively handles
  * GET /api/users/flow10 → returns a CustomMvcHandler instance.
  * For every other URL it returns null so DispatcherServlet falls through to
  * RequestMappingHandlerMapping which serves all @RestController endpoints.
@@ -36,7 +36,7 @@ import org.springframework.web.servlet.HandlerMapping;
  *        → [5] View.render(...)
  */
 @Component
-@Order(1)  // Run before Spring's RequestMappingHandlerMapping (which is @Order(0) by default but added last)
+@Order(-1)  // Must be lower than RequestMappingHandlerMapping's default order (0) so DispatcherServlet checks this first
 public class MvcInternalsHandlerMapping implements HandlerMapping {
 
     private static final Logger log = LoggerFactory.getLogger(MvcInternalsHandlerMapping.class);
