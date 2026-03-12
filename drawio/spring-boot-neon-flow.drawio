@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.5.2 Chrome/142.0.7444.265 Electron/39.6.1 Safari/537.36" version="29.5.2" pages="5">
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.5.2 Chrome/142.0.7444.265 Electron/39.6.1 Safari/537.36" version="29.5.2" pages="7">
   <diagram id="springboot-neon-flow" name="Spring Boot Full Request Lifecycle">
     <mxGraphModel dx="1042" dy="626" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="2800" background="#000000" math="0" shadow="0">
       <root>
@@ -794,6 +794,472 @@
         <!-- Flow 9 endpoints reference -->
         <mxCell id="sl-endpoints" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#E040FB;strokeWidth=1;fontColor=#E040FB;fontStyle=0;fontSize=11;shadow=0;dashed=1;" value="Flow 9 endpoints:&#xa;9a GET /api/users/secure/public       permitAll      200&#xa;9b GET /api/users/secure/user-only    authenticated  401/200&#xa;9c GET /api/users/secure/admin-only   hasRole(ADMIN) 403/200&#xa;9d GET /api/users/secure/method-owned @PostAuthorize 403/200" vertex="1">
           <mxGeometry height="100" width="440" x="240" y="1100" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="mvc-p1" name="Flow 10 — Custom MVC Pipeline">
+    <mxGraphModel dx="1042" dy="626" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="1400" background="#000000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ── Title ── -->
+        <mxCell id="title" parent="1"
+          value="Spring Boot — Flow 10 : Internal MVC Pipeline"
+          style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];strokeColor=none;fillColor=none;fontColor=#00E7FF;fontStyle=1;fontSize=22;shadow=0;"
+          vertex="1">
+          <mxGeometry x="0" y="10" width="1100" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ── Legend ── -->
+        <mxCell id="leg-bg" parent="1" value=""
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#333333;"
+          vertex="1">
+          <mxGeometry x="18" y="72" width="184" height="268" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-title" parent="1" value="Components"
+          style="text;html=1;align=center;fontColor=#FFFFFF;fontStyle=1;fontSize=12;strokeColor=none;fillColor=none;"
+          vertex="1">
+          <mxGeometry x="28" y="80" width="164" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="leg1" parent="1" value="Client"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;fontColor=#00E7FF;fontStyle=1;fontSize=11;"
+          vertex="1">
+          <mxGeometry x="28" y="110" width="164" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2" parent="1" value="DispatcherServlet"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;fontColor=#1B6EFF;fontStyle=1;fontSize=11;"
+          vertex="1">
+          <mxGeometry x="28" y="146" width="164" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3" parent="1" value="HandlerMapping"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;fontColor=#BC13FE;fontStyle=1;fontSize=11;"
+          vertex="1">
+          <mxGeometry x="28" y="182" width="164" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="leg4" parent="1" value="HandlerAdapter + Handler"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;fontColor=#39FF14;fontStyle=1;fontSize=11;"
+          vertex="1">
+          <mxGeometry x="28" y="218" width="164" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="leg5" parent="1" value="ViewResolver"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;fontColor=#F7EB07;fontStyle=1;fontSize=11;"
+          vertex="1">
+          <mxGeometry x="28" y="254" width="164" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="leg6" parent="1" value="View"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF6A00;fontColor=#FF6A00;fontStyle=1;fontSize=11;"
+          vertex="1">
+          <mxGeometry x="28" y="290" width="164" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ═══ MAIN FLOW — center column x=260, w=450 ═══ -->
+
+        <!-- [1] Client -->
+        <mxCell id="n1" parent="1"
+          value="[1] Client — Browser / Postman&#xa;GET /api/users/flow10"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontSize=13;"
+          vertex="1">
+          <mxGeometry x="260" y="80" width="450" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="n1" target="n2"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontSize=11;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="HTTP Request">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- [2] DispatcherServlet -->
+        <mxCell id="n2" parent="1"
+          value="[2] DispatcherServlet — doDispatch()&#xa;Iterates ALL HandlerMapping beans by @Order (lowest value = highest priority)"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;strokeWidth=1.5;fontColor=#1B6EFF;fontSize=13;"
+          vertex="1">
+          <mxGeometry x="260" y="208" width="450" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="n2" target="n3"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontSize=11;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="getHandler(request)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- [3] HandlerMapping -->
+        <mxCell id="n3" parent="1"
+          value="[3] MvcInternalsHandlerMapping  @Order(-1)&#xa;URI = /api/users/flow10  +  method = GET  →  MATCH ✓&#xa;returns  HandlerExecutionChain(CustomMvcHandler)"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontSize=13;"
+          vertex="1">
+          <mxGeometry x="260" y="342" width="450" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="n3" target="n4"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontSize=11;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="HandlerExecutionChain(CustomMvcHandler)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- [4] HandlerAdapter -->
+        <mxCell id="n4" parent="1"
+          value="[4] MvcInternalsHandlerAdapter&#xa;supports(handler)  →  handler instanceof CustomMvcHandler  →  TRUE&#xa;handle() called by DispatcherServlet"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontSize=13;"
+          vertex="1">
+          <mxGeometry x="260" y="492" width="450" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="n4" target="n5"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontSize=11;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="CustomMvcHandler.execute(request)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- [5] CustomMvcHandler -->
+        <mxCell id="n5" parent="1"
+          value="[5] CustomMvcHandler.execute()&#xa;Plain POJO — builds  Map&lt;String, Object&gt;  model&#xa;(step descriptions + uri + note)"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontSize=13;"
+          vertex="1">
+          <mxGeometry x="260" y="642" width="450" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="n5" target="n6"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontSize=11;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="resolveViewName('flow10-view', locale)   [called explicitly by HandlerAdapter]">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- [6] ViewResolver -->
+        <mxCell id="n6" parent="1"
+          value="[6] MvcInternalsViewResolver  @Order(1)&#xa;viewName equals 'flow10-view'  →  MATCH ✓&#xa;returns  new JsonView(objectMapper)"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontSize=13;"
+          vertex="1">
+          <mxGeometry x="260" y="796" width="450" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="n6" target="n7"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#FF6A00;strokeWidth=1.5;fontColor=#FF6A00;fontSize=11;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="view.render(model, request, response)   [called explicitly by HandlerAdapter]">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- [7] View -->
+        <mxCell id="n7" parent="1"
+          value="[7] JsonView.render()&#xa;response.setContentType(application/json)&#xa;objectMapper.writeValue(response.getWriter(), model.get(&quot;data&quot;))"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF6A00;strokeWidth=1.5;fontColor=#FF6A00;fontSize=13;"
+          vertex="1">
+          <mxGeometry x="260" y="950" width="450" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="n7" target="n8"
+          style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontSize=11;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="HTTP 200 — Content-Type: application/json">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- [8] Client response -->
+        <mxCell id="n8" parent="1"
+          value="[8] Client — receives JSON response&#xa;Pipeline complete ✓"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontSize=13;"
+          vertex="1">
+          <mxGeometry x="260" y="1100" width="450" height="58" as="geometry" />
+        </mxCell>
+
+        <!-- ═══ RIGHT-SIDE ANNOTATION BOXES ═══ -->
+
+        <mxCell id="ann2" parent="1"
+          value="HandlerMapping priority order:&#xa;  @Order(-1)  →  MvcInternalsHandlerMapping   ← FIRST&#xa;  @Order( 0)  →  RequestMappingHandlerMapping&#xa;  @Order( 2)  →  BeanNameUrlHandlerMapping"
+          style="text;html=1;align=left;verticalAlign=top;fontColor=#1B6EFF;fontSize=11;strokeColor=#1B6EFF;fillColor=none;dashed=1;rounded=1;"
+          vertex="1">
+          <mxGeometry x="748" y="200" width="320" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="ann2-line" edge="1" parent="1" source="n2" target="ann2"
+          style="strokeColor=#1B6EFF;strokeWidth=1;dashed=1;endArrow=open;endFill=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ann3" parent="1"
+          value="Returns null for all other URIs.&#xa;DispatcherServlet falls through to the&#xa;next HandlerMapping in the list."
+          style="text;html=1;align=left;verticalAlign=top;fontColor=#BC13FE;fontSize=11;strokeColor=#BC13FE;fillColor=none;dashed=1;rounded=1;"
+          vertex="1">
+          <mxGeometry x="748" y="350" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ann3-line" edge="1" parent="1" source="n3" target="ann3"
+          style="strokeColor=#BC13FE;strokeWidth=1;dashed=1;endArrow=open;endFill=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ann4" parent="1"
+          value="WHY explicit ViewResolver/View calls?&#xa;ContentNegotiatingViewResolver (auto-configured at&#xa;Ordered.HIGHEST_PRECEDENCE) would forward&#xa;'flow10-view' as a relative URL → 500 error.&#xa;We call them directly, then return null."
+          style="text;html=1;align=left;verticalAlign=top;fontColor=#39FF14;fontSize=11;strokeColor=#39FF14;fillColor=none;dashed=1;rounded=1;"
+          vertex="1">
+          <mxGeometry x="748" y="490" width="320" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="ann4-line" edge="1" parent="1" source="n4" target="ann4"
+          style="strokeColor=#39FF14;strokeWidth=1;dashed=1;endArrow=open;endFill=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ann6" parent="1"
+          value="Returns null for all other view names.&#xa;@Order(1) only matters if DispatcherServlet&#xa;calls it — here we call it directly."
+          style="text;html=1;align=left;verticalAlign=top;fontColor=#F7EB07;fontSize=11;strokeColor=#F7EB07;fillColor=none;dashed=1;rounded=1;"
+          vertex="1">
+          <mxGeometry x="748" y="800" width="320" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ann6-line" edge="1" parent="1" source="n6" target="ann6"
+          style="strokeColor=#F7EB07;strokeWidth=1;dashed=1;endArrow=open;endFill=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ann7" parent="1"
+          value="HandlerAdapter returns null → response committed.&#xa;DispatcherServlet sees no ModelAndView →&#xa;skips its own ViewResolver loop entirely.&#xa;Same pattern as every @RestController."
+          style="text;html=1;align=left;verticalAlign=top;fontColor=#FF6A00;fontSize=11;strokeColor=#FF6A00;fillColor=none;dashed=1;rounded=1;"
+          vertex="1">
+          <mxGeometry x="748" y="955" width="320" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="ann7-line" edge="1" parent="1" source="n7" target="ann7"
+          style="strokeColor=#FF6A00;strokeWidth=1;dashed=1;endArrow=open;endFill=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="mvc-p2" name="Custom MVC vs @RestController">
+    <mxGraphModel dx="1042" dy="626" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1200" pageHeight="1280" background="#000000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ── Title ── -->
+        <mxCell id="c-title" parent="1"
+          value="Spring Boot MVC — Custom Pipeline  vs  @RestController"
+          style="text;html=1;align=center;strokeColor=none;fillColor=none;fontColor=#00E7FF;fontStyle=1;fontSize=22;"
+          vertex="1">
+          <mxGeometry x="0" y="10" width="1200" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ── Column headers ── -->
+        <mxCell id="hdr-left" parent="1"
+          value="Flow 10 — Custom MVC&#xa;GET /api/users/flow10"
+          style="text;html=1;align=center;strokeColor=#00E7FF;fillColor=none;fontColor=#00E7FF;fontStyle=1;fontSize=15;rounded=1;"
+          vertex="1">
+          <mxGeometry x="30" y="64" width="380" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr-center" parent="1"
+          value="Step"
+          style="text;html=1;align=center;strokeColor=none;fillColor=none;fontColor=#888888;fontStyle=1;fontSize=14;"
+          vertex="1">
+          <mxGeometry x="450" y="72" width="300" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr-right" parent="1"
+          value="Standard @RestController&#xa;GET /api/users/{id}"
+          style="text;html=1;align=center;strokeColor=#FF007F;fillColor=none;fontColor=#FF007F;fontStyle=1;fontSize=15;rounded=1;"
+          vertex="1">
+          <mxGeometry x="790" y="64" width="380" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ── Thin vertical dividers ── -->
+        <mxCell id="div-l" parent="1" value=""
+          style="whiteSpace=wrap;html=1;fillColor=#2A2A2A;strokeColor=none;"
+          vertex="1">
+          <mxGeometry x="428" y="122" width="2" height="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="div-r" parent="1" value=""
+          style="whiteSpace=wrap;html=1;fillColor=#2A2A2A;strokeColor=none;"
+          vertex="1">
+          <mxGeometry x="770" y="122" width="2" height="1000" as="geometry" />
+        </mxCell>
+
+        <!-- ════ ROW 1  y=130 — HandlerMapping ════ -->
+        <mxCell id="L1" parent="1"
+          value="MvcInternalsHandlerMapping  @Order(-1)&#xa;Runs BEFORE RequestMappingHandlerMapping&#xa;URI = /api/users/flow10  →  MATCH ✓"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="30" y="130" width="380" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="C1" parent="1"
+          value="[1] HandlerMapping&#xa;Which handler?"
+          style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#AAAAAA;fontStyle=1;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="450" y="148" width="300" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="R1" parent="1"
+          value="RequestMappingHandlerMapping  @Order(0)&#xa;Default Spring Boot mapping&#xa;/api/users/{id}  @GetMapping  →  MATCH ✓"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="790" y="130" width="380" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="L1e" edge="1" parent="1" source="L1" target="L2"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#39FF14;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="R1e" edge="1" parent="1" source="R1" target="R2"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#39FF14;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ════ ROW 2  y=280 — Handler object ════ -->
+        <mxCell id="L2" parent="1"
+          value="CustomMvcHandler  (plain POJO)&#xa;No Spring annotations — just execute()&#xa;Stateless — one instance, reused"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="30" y="280" width="380" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="C2" parent="1"
+          value="[2] Handler Object&#xa;What processes the request?"
+          style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#AAAAAA;fontStyle=1;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="450" y="298" width="300" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="R2" parent="1"
+          value="HandlerMethod  (wraps @Controller method)&#xa;UserController.getUserById(Long)&#xa;@PathVariable / @Valid resolved by adapter"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="790" y="280" width="380" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="L2e" edge="1" parent="1" source="L2" target="L3"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#39FF14;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="R2e" edge="1" parent="1" source="R2" target="R3"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#39FF14;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ════ ROW 3  y=430 — HandlerAdapter ════ -->
+        <mxCell id="L3" parent="1"
+          value="MvcInternalsHandlerAdapter&#xa;supports(CustomMvcHandler)  →  TRUE&#xa;handle() calls execute(), drives steps 4+5 explicitly"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="30" y="430" width="380" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="C3" parent="1"
+          value="[3] HandlerAdapter&#xa;How to invoke the handler?"
+          style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#AAAAAA;fontStyle=1;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="450" y="448" width="300" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="R3" parent="1"
+          value="RequestMappingHandlerAdapter&#xa;supports(HandlerMethod)  →  TRUE&#xa;handle() resolves @PathVariable, @Valid, @InitBinder…"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="790" y="430" width="380" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="L3e" edge="1" parent="1" source="L3" target="L4"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#F7EB07;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="R3e" edge="1" parent="1" source="R3" target="R4"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#F7EB07;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ════ ROW 4  y=580 — Business Logic ════ -->
+        <mxCell id="L4" parent="1"
+          value="CustomMvcHandler.execute()&#xa;Returns  Map&lt;String, Object&gt;  model&#xa;(5 step descriptions + uri + note)"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="30" y="580" width="380" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="C4" parent="1"
+          value="[4] Business Logic&#xa;Application code executes"
+          style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#AAAAAA;fontStyle=1;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="450" y="598" width="300" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="R4" parent="1"
+          value="UserController.getUserById(Long id)&#xa;Returns  ResponseEntity&lt;UserResponse&gt;&#xa;(all param resolution complete before call)"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="790" y="580" width="380" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="L4e" edge="1" parent="1" source="L4" target="L5"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#F7EB07;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="R4e" edge="1" parent="1" source="R4" target="R5"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#555555;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;"
+          value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ════ ROW 5  y=730 — ViewResolver  ⚡ KEY DIFFERENCE ════ -->
+        <mxCell id="L5" parent="1"
+          value="MvcInternalsViewResolver&#xa;resolveViewName('flow10-view')  →  JsonView&#xa;✅  CALLED  (explicitly by HandlerAdapter)"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="30" y="730" width="380" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="C5" parent="1"
+          value="⚡ KEY DIFFERENCE&#xa;[5] ViewResolver"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF1744;fontColor=#FF1744;fontStyle=1;fontSize=14;"
+          vertex="1">
+          <mxGeometry x="460" y="742" width="280" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="R5" parent="1"
+          value="ViewResolver&#xa;❌  BYPASSED — @ResponseBody detected&#xa;HandlerAdapter writes response directly; no view name produced"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#555555;strokeWidth=1.5;fontColor=#555555;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="790" y="730" width="380" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="L5e" edge="1" parent="1" source="L5" target="L6"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF6A00;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="R5e" edge="1" parent="1" source="R5" target="R6"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF8C00;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;"
+          value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ════ ROW 6  y=880 — Response Writer ════ -->
+        <mxCell id="L6" parent="1"
+          value="JsonView.render()&#xa;objectMapper.writeValue(response.getWriter(), data)&#xa;Content-Type: application/json"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF6A00;strokeWidth=1.5;fontColor=#FF6A00;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="30" y="880" width="380" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="C6" parent="1"
+          value="[6] Response Writer&#xa;Who writes the body?"
+          style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#AAAAAA;fontStyle=1;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="450" y="898" width="300" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="R6" parent="1"
+          value="MappingJackson2HttpMessageConverter&#xa;Serialises  @ResponseBody  return value via Jackson&#xa;Content-Type: application/json"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="790" y="880" width="380" height="72" as="geometry" />
+        </mxCell>
+
+        <!-- ── Bottom result note ── -->
+        <mxCell id="result-left" parent="1"
+          value="HandlerAdapter returns null&#xa;→ Response already committed"
+          style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#888888;fontSize=11;"
+          vertex="1">
+          <mxGeometry x="30" y="966" width="380" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="result-right" parent="1"
+          value="HandlerAdapter returns null&#xa;→ Response already committed"
+          style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#888888;fontSize=11;"
+          vertex="1">
+          <mxGeometry x="790" y="966" width="380" height="36" as="geometry" />
+        </mxCell>
+
+        <!-- ── Summary row ── -->
+        <mxCell id="summary" parent="1"
+          value="Both flows deliver  HTTP 200  application/json  — identical result for the client,  completely different internal pipeline."
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;fontColor=#00E7FF;fontStyle=1;fontSize=14;"
+          vertex="1">
+          <mxGeometry x="100" y="1030" width="1000" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ── Comparison table note bottom ── -->
+        <mxCell id="tbl-note" parent="1"
+          value="Custom MVC: 4 Spring interfaces  |  ViewResolver IS called  |  View writes response&#xa;@RestController: 2 Spring interfaces  |  ViewResolver SKIPPED  |  HttpMessageConverter writes response"
+          style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#666666;fontSize=12;"
+          vertex="1">
+          <mxGeometry x="100" y="1094" width="1000" height="44" as="geometry" />
         </mxCell>
 
       </root>

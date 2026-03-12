@@ -766,6 +766,61 @@
       ]
     },
     {
+      "name": "Flow 10 — MVC Internals (HandlerMapping / HandlerAdapter / ViewResolver / View)",
+      "description": "FLOW 10 — Demonstrates the four internal Spring MVC components that DispatcherServlet uses on every request.\n\nCustom implementations:\n  MvcInternalsHandlerMapping   (@Order(-1))  — matches GET /api/users/flow10 exclusively\n  MvcInternalsHandlerAdapter                — invokes CustomMvcHandler.execute()\n  MvcInternalsViewResolver     (@Order(1))   — resolves 'flow10-view' → JsonView\n  JsonView (inner class)                    — writes JSON response body\n\nKey insight: @RestController bypasses ViewResolver entirely.\n  RequestMappingHandlerAdapter writes via HttpMessageConverter and returns null.\n  Flow 10 returns a real ModelAndView so the resolver/render steps fire explicitly.\n\nNo authentication required.",
+      "item": [
+        {
+          "name": "Flow 10 — MVC Internals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/flow10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "flow10"]
+            },
+            "description": "FLOW 10 — Internal Spring MVC pipeline.\n\nStack:\n  1. DispatcherServlet iterates HandlerMapping beans\n  2. MvcInternalsHandlerMapping (@Order(-1)) matches → returns CustomMvcHandler\n  3. MvcInternalsHandlerAdapter.handle() → CustomMvcHandler.execute() → model data\n  4. MvcInternalsViewResolver.resolveViewName('flow10-view') → JsonView\n  5. JsonView.render() → writes JSON to response\n\nResponse: JSON object describing all 5 steps + note about @RestController bypassing steps 4+5."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"Content-Type is application/json\", () => {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "});",
+                  "",
+                  "pm.test(\"All 5 pipeline steps present in response\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.flow).to.include('Flow 10');",
+                  "    pm.expect(json.step_1_dispatcher).to.exist;",
+                  "    pm.expect(json.step_2_mapping).to.exist;",
+                  "    pm.expect(json.step_3_adapter).to.exist;",
+                  "    pm.expect(json.step_4_view_resolver).to.exist;",
+                  "    pm.expect(json.step_5_view_render).to.exist;",
+                  "});",
+                  "",
+                  "pm.test(\"URI matches /api/users/flow10\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.uri).to.eql('/api/users/flow10');",
+                  "});",
+                  "",
+                  "pm.test(\"Note about @RestController bypass present\", () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.note).to.include('HttpMessageConverter');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Exception Paths",
       "description": "Requests that intentionally trigger exception branches to demonstrate exception handler routing.",
       "item": [
