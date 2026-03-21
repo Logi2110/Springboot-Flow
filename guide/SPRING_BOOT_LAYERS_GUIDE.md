@@ -29,19 +29,89 @@
 | **@Scheduled** | `event/ScheduledDemoTask.java` | Fires every 2 minutes — fixedRate demo |
 | **Cache** | `service/CacheDemoService.java` | `@Cacheable` / `@CachePut` / `@CacheEvict` — in-memory cache (Flow 8) |
 | **Security** | `config/SecurityConfig.java`, `service/SecuredDemoService.java` | `@EnableWebSecurity`, `@PreAuthorize`, `@PostAuthorize`, HTTP Basic (Flow 9) |
+| **Entity** | `entity/UserEntity.java` | `@Entity` — mapped to `users` PostgreSQL table, `@CreationTimestamp` / `@UpdateTimestamp` |
+| **Repository** | `repository/UserRepository.java` | `@Repository` — Spring Data JPA; derived queries + `@Query` JPQL |
+| **Transaction** | `service/UserTransactionService.java` | `@Transactional` — REQUIRED / REQUIRES_NEW / readOnly / rollback demos (Flow 11) |
 
 ---
 
 ## ❌ Missing Layers (Grouped by Scenario)
 
-### 1. Data / Persistence Layer
-> Most common missing layer in real applications
+### ~~1. Data / Persistence Layer~~ ✅ Added (Flow 11)
 
-| Layer | Annotation | When Used |
+| Layer | Location | When Used |
 |---|---|---|
-| **Repository** | `@Repository` | Every app with database (Spring Data JPA, JDBC) |
-| **Entity** | `@Entity` | ORM/JPA domain model |
-| **Transaction** | `@Transactional` | Database operations requiring ACID guarantees |
+| **Entity** | `entity/UserEntity.java` | `@Entity` — maps to `users` table; `@CreationTimestamp` / `@UpdateTimestamp` auto-filled by Hibernate |
+| **Repository** | `repository/UserRepository.java` | `@Repository` — `JpaRepository<UserEntity,Long>` + custom derived queries + `@Query` JPQL |
+| **Transaction** | `service/UserTransactionService.java` | `@Transactional` — demonstrates REQUIRED, REQUIRES_NEW, readOnly, rollback |
+
+**Endpoints added (Flow 11):**
+
+| Endpoint | TX Behavior | Demo |
+|---|---|---|
+| `POST /api/users/db` | `REQUIRED` — new TX, commit on return | INSERT user |
+| `GET /api/users/db/{id}` | `readOnly=true` — no dirty-check overhead | SELECT by id |
+| `GET /api/users/db` | `readOnly=true` | SELECT all |
+| `GET /api/users/db/dept/{dept}` | `readOnly=true` | SELECT by department |
+| `PUT /api/users/db/{id}` | `REQUIRED` — dirty-check generates UPDATE | UPDATE (no explicit save) |
+| `DELETE /api/users/db/{id}` | `REQUIRED` — DELETE SQL on commit | DELETE by id |
+| `POST /api/users/db/rollback` | `REQUIRED` — 2×INSERT then RuntimeException → ROLLBACK | ACID Atomicity demo |
+| `POST /api/users/db/new-tx` | `REQUIRES_NEW` — suspends caller, independent TX | Independent transaction demo |
+
+**Transaction flow** (for every method in `UserTransactionService`):
+```
+HTTP Request
+     │
+     ▼
+Spring AOP proxy intercepts the @Transactional method call
+     │
+     ▼  PlatformTransactionManager.getTransaction()
+Opens JDBC connection from HikariCP pool
+     │  (or JOINS / SUSPENDS existing TX — depends on Propagation)
+     ▼
+Hibernate Session bound to current thread (EntityManager)
+     │
+     ▼  method body runs
+repository.save() / findBy*() — Hibernate tracks "managed" entities
+     │
+     ▼  method returns normally
+Hibernate flush → SQL generated → PlatformTransactionManager.commit() → COMMIT
+     │  (ROLLBACK if any RuntimeException propagates out)
+     ▼
+Connection returned to HikariCP pool
+```
+
+**Propagation types demonstrated:**
+```
+Propagation.REQUIRED (default):            ← used in createUser, updateUser, deleteUser
+  Caller has TX  → JOIN it
+  No TX          → START new one
+  RuntimeException → ROLLBACK entire TX
+
+Propagation.REQUIRES_NEW:                  ← used in createUserWithNewTx
+  Always start a brand-new independent TX
+  Suspends the caller's TX (if any)
+  Commits/rolls back independently
+  Use-case: audit log, outbox — must persist even if outer TX rolls back
+
+readOnly = true:                           ← used in all SELECT methods
+  Hibernate skips dirty-checking on flush
+  DB may route to read replica
+  Write inside readOnly TX → exception at flush
+
+Atomic rollback demo (Flow 11e):           ← POST /api/users/db/rollback
+  INSERT user1 ─┐  both queued in same TX
+  INSERT user2 ─┘
+  throw RuntimeException → Spring calls ROLLBACK
+  → NEITHER user ends up in the DB (Atomicity)
+```
+
+> 💡 Hibernate dirty-check: you do NOT need to call `save()` after mutating a managed entity.
+>    When the TX commits, Hibernate compares the entity's current state with the snapshot taken
+>    at load time and generates UPDATE SQL only for changed fields.
+
+> 💡 `ddl-auto: update` in `application.yaml` auto-creates the `users` table on first run.
+>    Switch to `validate` or `none` + Flyway/Liquibase for production.
 
 ---
 
@@ -388,7 +458,7 @@ Browser Response
 
 | Priority | Layer | Reason |
 |---|---|---|
-| 🔴 High | **Repository + Entity + Transaction** | Foundation of every real app |
+| ✅ Done | **Repository + Entity + Transaction** | Added — `entity/UserEntity.java`, `repository/UserRepository.java`, `service/UserTransactionService.java` — PostgreSQL + all @Transactional propagation types (Flow 11) |
 | ✅ Done | **ResponseBodyAdvice** | Added — `advice/LoggingResponseBodyAdvice.java` |
 | ✅ Done | **RequestBodyAdvice** | Added — `advice/LoggingRequestBodyAdvice.java` |
 | ✅ Done | **ArgumentResolver** | Added — `resolver/RequestInfoArgumentResolver.java` |
@@ -427,6 +497,38 @@ Browser Response
 🚀 6.  INTERCEPTOR - postHandle
 🚀 7.  INTERCEPTOR - afterCompletion
 🔥 8.  FILTER - AFTER
+
+### Flow 11: Data / Persistence Layer (POST /api/users/db etc.)
+
+**11a — INSERT (Propagation.REQUIRED)**
+🔥 1.  FILTER - BEFORE
+🚀 2.  INTERCEPTOR - preHandle
+🎯 3a. AOP - CONTROLLER BEFORE
+📋 3.  CONTROLLER - EXECUTING: createUser()
+💾 4a. TX OPEN   — PlatformTransactionManager opens new JDBC connection from HikariCP pool
+💾 4b. REPOSITORY - existsByEmail() → SELECT email check
+💾 4c. REPOSITORY - save() → Hibernate queues INSERT (not yet sent to DB)
+💾 4d. TX COMMIT  — Hibernate flush → INSERT SQL fires → COMMIT → connection returned to pool
+📋 5.  CONTROLLER - RETURNING: 201 Created
+🎯 5a. AOP - @AfterReturning / @After / @Around AFTER
+🚀 6.  INTERCEPTOR - postHandle / afterCompletion
+🔥 7.  FILTER - AFTER
+
+**11b — SELECT (readOnly = true)**
+💾 TX OPEN (readOnly) → SELECT → result → TX COMMIT (no flush needed)
+
+**11c — UPDATE (dirty-check)**
+💾 TX OPEN → findById() → mutate entity fields → TX COMMIT → Hibernate detects change → UPDATE SQL
+
+**11d — DELETE**
+💾 TX OPEN → findById() → delete(entity) → TX COMMIT → DELETE SQL fires
+
+**11e — ROLLBACK (Atomicity demo)**
+💾 TX OPEN → INSERT user1 queued → INSERT user2 queued → RuntimeException thrown
+💾 Spring AOP catches exception → TX ROLLBACK → neither INSERT reaches the DB
+
+**11f — REQUIRES_NEW**
+💾 Caller TX suspended → brand-new independent TX opened → INSERT → independent COMMIT
 
 ### Flow 8: Cache Layer Demo (GET/PUT/DELETE /api/users/cache-demo/{id})
 

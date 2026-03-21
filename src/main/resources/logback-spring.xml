@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  logback-spring.xml — Spring Boot Flow Demo
+  ─────────────────────────────────────────────────────────────────────────────
+  Console  → colorized ANSI output, one color per application layer
+  File     → logs/flow.log  (plain text, no ANSI)
+             Rolls daily + when file reaches 50 MB
+             Keeps 30 days / 500 MB total history
+             logs/flow.YYYY-MM-DD.i.log.gz — compressed archive
+
+  Log-level coloring on console:
+     ERROR → bright red   WARN → yellow   INFO → green
+     DEBUG → cyan         TRACE → white
+-->
+<configuration scan="true" scanPeriod="30 seconds">
+
+  <!-- Spring Boot defaults: LOG_LEVEL_PATTERN, CONSOLE_LOG_PATTERN, etc. -->
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+  <!-- ── Custom converters ──────────────────────────────────────────────── -->
+  <conversionRule conversionWord="colorMsg"
+                  converterClass="com.logi.flow.config.LogColorConverter"/>
+  <conversionRule conversionWord="colorLogger"
+                  converterClass="com.logi.flow.config.LoggerColorConverter"/>
+
+  <!-- ── Log file location — override with -Dlog.dir=... at startup ──────── -->
+  <property name="LOG_DIR"  value="${log.dir:-logs}"/>
+  <property name="LOG_FILE" value="${LOG_DIR}/flow.log"/>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- CONSOLE appender  (ANSI colors)                                       -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%clr(%d{HH:mm:ss.SSS}){faint} %clr([%15.15t]){faint} %clr(%-5p){highlight} %colorLogger %clr(-){faint} %colorMsg%n</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- FILE appender  (plain text, rolling daily + by size)                  -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_FILE}</file>
+    <encoder>
+      <!-- Plain pattern — no ANSI escapes in the file -->
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%15.15t] %-5p %-40.40logger{39} - %msg%n</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <!-- Archive name: logs/flow.2026-03-13.0.log.gz -->
+      <fileNamePattern>${LOG_DIR}/flow.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+      <maxFileSize>50MB</maxFileSize>       <!-- roll when active file hits 50 MB    -->
+      <maxHistory>30</maxHistory>           <!-- keep 30 days of archives            -->
+      <totalSizeCap>500MB</totalSizeCap>    <!-- total archive cap; oldest deleted first -->
+    </rollingPolicy>
+  </appender>
+
+  <!-- ── Log levels ─────────────────────────────────────────────────────── -->
+  <logger name="com.logi.flow"                  level="INFO"  additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- Spring MVC request mapping / handler resolution -->
+  <logger name="org.springframework.web"         level="DEBUG" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- AOP proxy creation and advice firing -->
+  <logger name="org.springframework.aop"         level="DEBUG" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- Security filter chain -->
+  <logger name="org.springframework.security"    level="DEBUG" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- Hibernate SQL statements (enabled by show-sql / format_sql in application.yaml) -->
+  <logger name="org.hibernate.SQL"               level="DEBUG" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+
+  <!-- Spring transaction management — "Creating new transaction", "Committing", "Rolling back", "Joining" -->
+  <logger name="org.springframework.transaction"  level="DEBUG" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- JpaTransactionManager — open/close/join per-request messages -->
+  <logger name="org.springframework.orm.jpa"      level="DEBUG" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- HikariCP connection pool events -->
+  <logger name="com.zaxxer.hikari"               level="INFO"  additivity="false">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+
+  <!-- ── Root (everything else) ─────────────────────────────────────────── -->
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </root>
+
+</configuration>

@@ -10,6 +10,7 @@ import com.logi.flow.resolver.RequestInfo;
 import com.logi.flow.service.CacheDemoService;
 import com.logi.flow.service.SecuredDemoService;
 import com.logi.flow.service.UserService;
+import com.logi.flow.service.UserTransactionService;
 import com.logi.flow.startup.StartupInfoStore;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +26,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,6 +43,7 @@ import java.util.Map;
  * Flow 8 - GET/PUT/DELETE /cache-demo/{id} : Caching Layer — @Cacheable / @CachePut / @CacheEvict
  * Flow 9 - GET /secure/*                   : Security Layer — SecurityFilterChain / @PreAuthorize / @PostAuthorize
  * Flow 10- GET /flow10                       : MVC Internals — custom HandlerMapping + HandlerAdapter + ViewResolver + View
+ * Flow 11- GET/POST/PUT/DELETE /db/*         : Data / Persistence Layer — @Entity + @Repository + @Transactional (PostgreSQL)
  */
 @RestController
 @RequestMapping("/api/users")
@@ -66,6 +70,9 @@ public class UserController {
 
     @Autowired
     private SecuredDemoService securedDemoService;
+
+    @Autowired
+    private UserTransactionService userTransactionService;
 
     /**
      * VALIDATION LAYER — DataBinder
@@ -422,4 +429,171 @@ public class UserController {
     //   JsonView                    → writes JSON response
     // Calling GET /api/users/flow10 will NOT hit this controller at all.
     // ─────────────────────────────────────────────────────────────────────────────
+
+    // ═════════════════════════════════════════════════════════════════════════════
+    // FLOW 11: Data / Persistence Layer — @Entity + @Repository + @Transactional
+    //
+    // Execution path (all sub-flows):
+    //   SecurityFilterChain → Filter → Interceptor → AOP → Controller
+    //     → UserTransactionService (@Transactional AOP proxy opens TX)
+    //       → UserRepository (Spring Data JPA → Hibernate → JDBC → PostgreSQL)
+    //     ← TX committed / rolled back on method exit
+    //   ← AOP → Interceptor → Filter → Response
+    //
+    // Sub-flows:
+    //   11a  POST   /api/users/db           → INSERT  (Propagation.REQUIRED)
+    //   11b  GET    /api/users/db/{id}      → SELECT by id  (readOnly=true)
+    //   11b  GET    /api/users/db           → SELECT all    (readOnly=true)
+    //   11b  GET    /api/users/db/dept/{d}  → SELECT by dept (readOnly=true)
+    //   11c  PUT    /api/users/db/{id}      → UPDATE  (dirty-check, no explicit save())
+    //   11d  DELETE /api/users/db/{id}      → DELETE  (Propagation.REQUIRED)
+    //   11e  POST   /api/users/db/rollback  → INSERT×2 then RuntimeException → ROLLBACK demo
+    //   11f  POST   /api/users/db/new-tx    → INSERT in REQUIRES_NEW independent transaction
+    // ═════════════════════════════════════════════════════════════════════════════
+
+    /**
+     * FLOW 11a: INSERT — Propagation.REQUIRED (default).
+     *
+     * Transaction lifecycle:
+     *   1. Spring AOP opens new TX (no caller TX exists).
+     *   2. email uniqueness checked via SELECT (existsByEmail).
+     *   3. repository.save() → Hibernate queues INSERT.
+     *   4. Method returns → Spring AOP commits → SQL fires → COMMIT.
+     *   5. DuplicateEmailException (unchecked) → automatic ROLLBACK.
+     */
+    @PostMapping("/db")
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request) {
+        logger.info("📋 3. CONTROLLER - EXECUTING: createUser() (Flow 11a) name={}", request.getName());
+
+        UserResponse response = userTransactionService.createUser(request);
+
+        logger.info("📋 5. CONTROLLER - RETURNING: createUser() id={}", response.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
+     * FLOW 11b: SELECT by id — readOnly=true transaction.
+     *
+     * Hibernate skips dirty-checking; DB may route to read replica.
+     */
+    @GetMapping("/db/{id}")
+    public ResponseEntity<UserResponse> getDbUserById(@PathVariable Long id) {
+        logger.info("📋 3. CONTROLLER - EXECUTING: getDbUserById() (Flow 11b) id={}", id);
+
+        UserResponse response = userTransactionService.getUserById(id);
+
+        logger.info("📋 5. CONTROLLER - RETURNING: getDbUserById() id={}", id);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * FLOW 11b: SELECT all — readOnly=true transaction.
+     */
+    @GetMapping("/db")
+    public ResponseEntity<List<UserResponse>> getAllDbUsers() {
+        logger.info("📋 3. CONTROLLER - EXECUTING: getAllDbUsers() (Flow 11b)");
+
+        List<UserResponse> users = userTransactionService.getAllUsers();
+
+        logger.info("📋 5. CONTROLLER - RETURNING: getAllDbUsers() count={}", users.size());
+        return ResponseEntity.ok(users);
+    }
+
+    /**
+     * FLOW 11b: SELECT by department — readOnly=true transaction.
+     */
+    @GetMapping("/db/dept/{department}")
+    public ResponseEntity<List<UserResponse>> getUsersByDepartment(@PathVariable String department) {
+        logger.info("📋 3. CONTROLLER - EXECUTING: getUsersByDepartment() (Flow 11b) dept={}", department);
+
+        List<UserResponse> users = userTransactionService.getUsersByDepartment(department);
+
+        logger.info("📋 5. CONTROLLER - RETURNING: getUsersByDepartment() count={}", users.size());
+        return ResponseEntity.ok(users);
+    }
+
+    /**
+     * FLOW 11c: UPDATE — Hibernate dirty-check (no explicit save() needed).
+     *
+     * findById() returns a managed entity.
+     * Mutating fields on it is enough — Hibernate detects the change on TX commit.
+     */
+    @PutMapping("/db/{id}")
+    public ResponseEntity<UserResponse> updateDbUser(@PathVariable Long id,
+                                                     @Valid @RequestBody UserRequest request) {
+        logger.info("📋 3. CONTROLLER - EXECUTING: updateDbUser() (Flow 11c) id={}", id);
+
+        UserResponse response = userTransactionService.updateUser(id, request);
+
+        logger.info("📋 5. CONTROLLER - RETURNING: updateDbUser() id={}", id);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * FLOW 11d: DELETE — find then delete within same transaction.
+     */
+    @DeleteMapping("/db/{id}")
+    public ResponseEntity<Map<String, Object>> deleteDbUser(@PathVariable Long id) {
+        logger.info("📋 3. CONTROLLER - EXECUTING: deleteDbUser() (Flow 11d) id={}", id);
+
+        userTransactionService.deleteUser(id);
+
+        logger.info("📋 5. CONTROLLER - RETURNING: deleteDbUser() id={} deleted", id);
+        return ResponseEntity.ok(Map.of(
+                "message", "User deleted",
+                "id", id,
+                "hint", "Both findById (SELECT) and delete (DELETE) ran in the same @Transactional method"
+        ));
+    }
+
+    /**
+     * FLOW 11e: Rollback demo — atomicity (A in ACID).
+     *
+     * Two users are INSERTed within a single @Transactional method.
+     * A RuntimeException is thrown at the end.
+     * Spring rolls back the entire transaction — NEITHER user appears in the DB.
+     *
+     * Request body: array of exactly 2 UserRequest objects.
+     */
+    @PostMapping("/db/rollback")
+    public ResponseEntity<Map<String, Object>> rollbackDemo(@RequestBody List<@Valid UserRequest> requests) {
+        if (requests == null || requests.size() != 2) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Provide exactly 2 user objects in the array"
+            ));
+        }
+
+        logger.info("📋 3. CONTROLLER - EXECUTING: rollbackDemo() (Flow 11e)");
+
+        try {
+            userTransactionService.rollbackDemo(requests.get(0), requests.get(1));
+        } catch (RuntimeException ex) {
+            logger.info("📋 5. CONTROLLER - CAUGHT expected exception: '{}' — transaction was rolled back", ex.getMessage());
+            return ResponseEntity.ok(Map.of(
+                    "result", "ROLLED BACK",
+                    "reason", ex.getMessage(),
+                    "hint",   "Neither user was persisted — check the DB, both INSERTs were undone (ACID: Atomicity)"
+            ));
+        }
+
+        return ResponseEntity.ok(Map.of("result", "unexpected commit — should not reach here"));
+    }
+
+    /**
+     * FLOW 11f: REQUIRES_NEW — inserts in a brand-new independent transaction.
+     *
+     * Demonstrates that REQUIRES_NEW suspends any outer transaction and opens its own.
+     * Commits (or rolls back) independently of any caller transaction.
+     *
+     * Use-case: audit logs, outbox patterns — must persist regardless of outer TX outcome.
+     */
+    @PostMapping("/db/new-tx")
+    public ResponseEntity<UserResponse> createUserNewTx(@Valid @RequestBody UserRequest request) {
+        logger.info("📋 3. CONTROLLER - EXECUTING: createUserNewTx() (Flow 11f) — REQUIRES_NEW transaction");
+
+        UserResponse response = userTransactionService.createUserWithNewTx(request);
+
+        logger.info("📋 5. CONTROLLER - RETURNING: createUserNewTx() id={}", response.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 }

@@ -2,21 +2,58 @@ spring:
   application:
     name: flow
 
+  # ── Data / Persistence Layer (Flow 11) ────────────────────────────────────────
+  # PostgreSQL datasource — update credentials to match your local instance.
+  # To create the DB:  CREATE DATABASE flowdb;
+  datasource:
+    url: jdbc:postgresql://localhost:5432/flowdb
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000   # ms — how long to wait for a connection from the pool
+      idle-timeout: 600000        # ms — how long an idle connection lives before eviction
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      # create-drop : drops + recreates schema on every startup  (dev only)
+      # update      : adds missing columns / tables, never drops  (safer dev)
+      # validate    : checks schema matches entities, no changes  (staging/prod)
+      # none        : do nothing — manage schema with Flyway/Liquibase in prod
+      ddl-auto: update
+    show-sql: true                # prints SQL to console — disable in production
+    properties:
+      hibernate:
+        format_sql: true          # pretty-print the SQL
+        jdbc:
+          batch_size: 25          # batch INSERTs/UPDATEs for better throughput
+        order_inserts: true
+        order_updates: true
+
   # Caching Layer — uses simple in-memory ConcurrentMapCacheManager (no external server required)
   # Switch to redis/caffeine in production by changing spring.cache.type and adding the dependency
   cache:
     type: simple
     cache-names: users
 
+  # Force ANSI colors on (works on VS Code terminal, Windows Terminal, IntelliJ)
+  output:
+    ansi:
+      enabled: always
+
 # Enable detailed logging to see the execution flow
+# Log levels only — the console pattern is defined in logback-spring.xml
 logging:
   level:
     com.logi.flow: INFO
     org.springframework.web: DEBUG
     org.springframework.aop: DEBUG
     org.springframework.security: DEBUG
-  pattern:
-    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    org.springframework.transaction: DEBUG          # "Creating new transaction", "Committing", "Rolling back"
+    org.springframework.orm.jpa: DEBUG              # JpaTransactionManager open/close/join messages
 
 # Server configuration
 server:

@@ -821,6 +821,200 @@
       ]
     },
     {
+      "name": "Flow 11 — Data / Persistence Layer (@Entity / @Repository / @Transactional)",
+      "description": "FLOW 11 — Data / Persistence Layer with PostgreSQL.\n\nDemonstrates all key @Transactional behaviors:\n  11a  POST   /db           → INSERT  (Propagation.REQUIRED, new TX)\n  11b  GET    /db/{id}      → SELECT  (readOnly=true, no dirty-check)\n  11b  GET    /db           → SELECT all\n  11b  GET    /db/dept/{d}  → SELECT by department\n  11c  PUT    /db/{id}      → UPDATE  (dirty-check — no explicit save() needed)\n  11d  DELETE /db/{id}      → DELETE  (find + delete in same TX)\n  11e  POST   /db/rollback  → ROLLBACK demo — 2×INSERT then RuntimeException → neither persists\n  11f  POST   /db/new-tx    → REQUIRES_NEW — independent transaction\n\nPrerequisite: PostgreSQL running on localhost:5432, database 'flowdb'.",
+      "item": [
+        {
+          "name": "Flow 11a — Create User (INSERT, REQUIRED)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/users/db", "host": ["{{base_url}}"], "path": ["api","users","db"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alice Smith\",\n  \"email\": \"alice@example.com\",\n  \"department\": \"Engineering\"\n}"
+            },
+            "description": "FLOW 11a — INSERT with Propagation.REQUIRED.\n\n1. Spring AOP opens new JDBC transaction.\n2. existsByEmail() → SELECT uniqueness check.\n3. repository.save() → Hibernate queues INSERT (not yet in DB).\n4. Method returns → Hibernate flush → INSERT SQL → COMMIT.\n\nDuplicate email → 409 Conflict (DuplicateEmailException → automatic ROLLBACK)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+                  "pm.test('Has id', () => pm.expect(pm.response.json().id).to.be.a('number'));",
+                  "pm.test('Name matches', () => pm.expect(pm.response.json().name).to.equal('Alice Smith'));",
+                  "pm.test('Has createdAt', () => pm.expect(pm.response.json().createdAt).to.exist);",
+                  "if (pm.response.json().id) { pm.collectionVariables.set('created_user_id', pm.response.json().id); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 11b — Get User by ID (SELECT, readOnly)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/users/db/{{created_user_id}}", "host": ["{{base_url}}"], "path": ["api","users","db","{{created_user_id}}"] },
+            "description": "FLOW 11b — SELECT with readOnly=true transaction.\n\nHibernate skips dirty-checking. DB may route to a read replica.\nNo write operations allowed inside this transaction boundary."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has id', () => pm.expect(pm.response.json().id).to.exist);",
+                  "pm.test('Has name', () => pm.expect(pm.response.json().name).to.be.a('string'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 11b — Get All Users (SELECT all, readOnly)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/users/db", "host": ["{{base_url}}"], "path": ["api","users","db"] },
+            "description": "FLOW 11b — SELECT all users with readOnly=true."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 11b — Get Users by Department (SELECT by dept, readOnly)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/users/db/dept/Engineering", "host": ["{{base_url}}"], "path": ["api","users","db","dept","Engineering"] },
+            "description": "FLOW 11b — SELECT by department with readOnly=true."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 11c — Update User (UPDATE, dirty-check)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/users/db/{{created_user_id}}", "host": ["{{base_url}}"], "path": ["api","users","db","{{created_user_id}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alice Updated\",\n  \"email\": \"alice@example.com\",\n  \"department\": \"Management\"\n}"
+            },
+            "description": "FLOW 11c — UPDATE via Hibernate dirty-check.\n\nNo explicit save() call in service code.\nfindById() returns a managed entity.\nMutating its fields is enough — Hibernate detects the diff on TX commit\nand generates UPDATE SQL automatically."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Name updated', () => pm.expect(pm.response.json().name).to.equal('Alice Updated'));",
+                  "pm.test('Department updated', () => pm.expect(pm.response.json().department).to.equal('Management'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 11e — Rollback Demo (ACID Atomicity)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/users/db/rollback", "host": ["{{base_url}}"], "path": ["api","users","db","rollback"] },
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  { \"name\": \"Rollback User1\", \"email\": \"rollback1@example.com\", \"department\": \"Engineering\" },\n  { \"name\": \"Rollback User2\", \"email\": \"rollback2@example.com\", \"department\": \"Engineering\" }\n]"
+            },
+            "description": "FLOW 11e — Demonstrates ACID Atomicity via intentional rollback.\n\n1. INSERT user1 queued (Hibernate — not yet committed).\n2. INSERT user2 queued.\n3. RuntimeException thrown.\n4. Spring AOP catches it → PlatformTransactionManager.rollback().\n5. NEITHER user ends up in the database.\n\nExpected response: { result: 'ROLLED BACK', reason: '...' }\nVerify: check DB after — neither email should exist."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Result is ROLLED BACK', () => pm.expect(pm.response.json().result).to.equal('ROLLED BACK'));",
+                  "pm.test('Has reason', () => pm.expect(pm.response.json().reason).to.be.a('string'));",
+                  "pm.test('Has hint', () => pm.expect(pm.response.json().hint).to.include('ACID'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 11f — Create User REQUIRES_NEW (independent TX)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/users/db/new-tx", "host": ["{{base_url}}"], "path": ["api","users","db","new-tx"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bob Jones\",\n  \"email\": \"bob@example.com\",\n  \"department\": \"Finance\"\n}"
+            },
+            "description": "FLOW 11f — REQUIRES_NEW propagation.\n\nSuspends any existing transaction from the caller.\nOpens a completely independent new transaction.\nCommits independently — even if the outer transaction later rolls back.\n\nCommon use-case: audit logs, outbox events —\nmust be persisted regardless of outer TX outcome."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+                  "pm.test('Has id', () => pm.expect(pm.response.json().id).to.be.a('number'));",
+                  "pm.test('Has createdAt', () => pm.expect(pm.response.json().createdAt).to.exist);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Flow 11d — Delete User (DELETE, REQUIRED)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{base_url}}/api/users/db/{{created_user_id}}", "host": ["{{base_url}}"], "path": ["api","users","db","{{created_user_id}}"] },
+            "description": "FLOW 11d — DELETE within a single REQUIRED transaction.\n\nfindById() → SELECT (managed entity)\nrepository.delete(entity) → marks for removal\nTX commit → DELETE SQL fires\n\nRun last — removes the user created in Flow 11a."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Message is deleted', () => pm.expect(pm.response.json().message).to.equal('User deleted'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Exception Paths",
       "description": "Requests that intentionally trigger exception branches to demonstrate exception handler routing.",
       "item": [

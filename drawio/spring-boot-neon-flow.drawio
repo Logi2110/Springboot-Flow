@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.5.2 Chrome/142.0.7444.265 Electron/39.6.1 Safari/537.36" version="29.5.2" pages="7">
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.5.2 Chrome/142.0.7444.265 Electron/39.6.1 Safari/537.36" version="29.5.2" pages="8">
   <diagram id="springboot-neon-flow" name="Spring Boot Full Request Lifecycle">
     <mxGraphModel dx="1042" dy="626" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="2800" background="#000000" math="0" shadow="0">
       <root>
@@ -19,23 +19,26 @@
         <mxCell id="leg3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1B6EFF;fontColor=#1B6EFF;fontStyle=1;fontSize=11;shadow=0;" value="DispatcherServlet" vertex="1">
           <mxGeometry height="26" width="140" x="20" y="164" as="geometry" />
         </mxCell>
-        <mxCell id="leg4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;fontColor=#BC13FE;fontStyle=1;fontSize=11;shadow=0;" value="Interceptor / Advice" vertex="1">
+        <mxCell id="leg4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00FFCC;fontColor=#00FFCC;fontStyle=1;fontSize=11;shadow=0;" value="Interceptor" vertex="1">
           <mxGeometry height="26" width="140" x="20" y="196" as="geometry" />
         </mxCell>
-        <mxCell id="leg5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;fontColor=#FF8C00;fontStyle=1;fontSize=11;shadow=0;" value="Validation Layer" vertex="1">
+        <mxCell id="leg4b" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;fontColor=#BC13FE;fontStyle=1;fontSize=11;shadow=0;" value="Advice" vertex="1">
           <mxGeometry height="26" width="140" x="20" y="228" as="geometry" />
         </mxCell>
-        <mxCell id="leg6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;fontColor=#39FF14;fontStyle=1;fontSize=11;shadow=0;" value="AOP + Controller" vertex="1">
+        <mxCell id="leg5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;fontColor=#FF8C00;fontStyle=1;fontSize=11;shadow=0;" value="Validation Layer" vertex="1">
           <mxGeometry height="26" width="140" x="20" y="260" as="geometry" />
         </mxCell>
-        <mxCell id="leg7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;fontColor=#F7EB07;fontStyle=1;fontSize=11;shadow=0;" value="Service / Repository" vertex="1">
+        <mxCell id="leg6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;fontColor=#39FF14;fontStyle=1;fontSize=11;shadow=0;" value="AOP + Controller" vertex="1">
           <mxGeometry height="26" width="140" x="20" y="292" as="geometry" />
         </mxCell>
-        <mxCell id="leg8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF6A00;fontColor=#FF6A00;fontStyle=1;fontSize=11;shadow=0;" value="Database" vertex="1">
+        <mxCell id="leg7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;fontColor=#F7EB07;fontStyle=1;fontSize=11;shadow=0;" value="Service / Repository" vertex="1">
           <mxGeometry height="26" width="140" x="20" y="324" as="geometry" />
         </mxCell>
-        <mxCell id="leg9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF1744;fontColor=#FF1744;fontStyle=1;fontSize=11;shadow=0;" value="Security" vertex="1">
+        <mxCell id="leg8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF6A00;fontColor=#FF6A00;fontStyle=1;fontSize=11;shadow=0;" value="Database" vertex="1">
           <mxGeometry height="26" width="140" x="20" y="356" as="geometry" />
+        </mxCell>
+        <mxCell id="leg9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF1744;fontColor=#FF1744;fontStyle=1;fontSize=11;shadow=0;" value="Security" vertex="1">
+          <mxGeometry height="26" width="140" x="20" y="388" as="geometry" />
         </mxCell>
         <!-- ═══ FORWARD FLOW (top → bottom) ═══ -->
         <!-- [1] Client -->
@@ -67,10 +70,10 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <!-- [5] Interceptor -->
-        <mxCell id="n4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=13;shadow=0;" value="[5] Interceptor - preHandle (LoggingInterceptor)" vertex="1">
+        <mxCell id="n4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00FFCC;strokeWidth=1.5;fontColor=#00FFCC;fontStyle=0;fontSize=13;shadow=0;" value="[5] Interceptor - preHandle (LoggingInterceptor)" vertex="1">
           <mxGeometry height="54" width="300" x="370" y="486" as="geometry" />
         </mxCell>
-        <mxCell id="e4" edge="1" parent="1" source="n4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n5" value="Pre-process Body">
+        <mxCell id="e4" edge="1" parent="1" source="n4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#00FFCC;strokeWidth=1.5;fontColor=#00FFCC;fontStyle=0;fontSize=11;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n5" value="Pre-process Body">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <!-- [6] RequestBodyAdvice BEFORE -->
@@ -165,7 +168,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <!-- [19] Database -->
-        <mxCell id="n16" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=none;strokeColor=#FF6A00;strokeWidth=1.5;fontColor=#FF6A00;fontStyle=0;fontSize=13;shadow=0;" value="[19] Database - JPA / H2 / MySQL" vertex="1">
+        <mxCell id="n16" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=none;strokeColor=#FF6A00;strokeWidth=1.5;fontColor=#FF6A00;fontStyle=0;fontSize=13;shadow=0;" value="[19] PostgreSQL — users table (JPA / Hibernate / Flow 11)" vertex="1">
           <mxGeometry height="70" width="300" x="370" y="1942" as="geometry" />
         </mxCell>
         <!-- ═══ RETURN FLOW (bottom → top, right side) ═══ -->
@@ -260,7 +263,7 @@
           </mxGeometry>
         </mxCell>
         <!-- Interceptor → postHandle / afterCompletion -->
-        <mxCell id="r6" edge="1" parent="1" source="n4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#BC13FE;strokeWidth=1.5;fontColor=#BC13FE;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n3" value="postHandle / afterCompletion">
+        <mxCell id="r6" edge="1" parent="1" source="n4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;strokeColor=#00FFCC;strokeWidth=1.5;fontColor=#00FFCC;fontStyle=0;fontSize=10;shadow=0;dashed=1;endArrow=block;endFill=1;flowAnimation=1;" target="n3" value="postHandle / afterCompletion">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="840" y="513" />
@@ -292,6 +295,28 @@
         </mxCell>
         <mxCell id="lbl-res" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontColor=#FF6A00;fontStyle=1;fontSize=13;rotation=90;strokeColor=none;fillColor=none;" value="RESPONSE (up)" vertex="1">
           <mxGeometry height="30" width="120" x="960" y="970" as="geometry" />
+        </mxCell>
+
+        <!-- ── @Transactional Boundary Annotations (Flow 11) ── -->
+        <mxCell id="tx-open-lbl" parent="1"
+          style="text;html=1;align=center;fontColor=#F7EB07;fontStyle=1;fontSize=11;strokeColor=#F7EB07;fillColor=none;rounded=1;"
+          value="TX&#xa;OPEN" vertex="1">
+          <mxGeometry x="206" y="1630" width="56" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="tx-commit-lbl" parent="1"
+          style="text;html=1;align=center;fontColor=#39FF14;fontStyle=1;fontSize=11;strokeColor=#39FF14;fillColor=none;rounded=1;"
+          value="TX&#xa;COMMIT" vertex="1">
+          <mxGeometry x="206" y="1952" width="56" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="tx-rollback-lbl" parent="1"
+          style="text;html=1;align=center;fontColor=#FF1744;fontStyle=1;fontSize=10;strokeColor=none;fillColor=none;"
+          value="or ROLLBACK" vertex="1">
+          <mxGeometry x="197" y="2006" width="74" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="tx-bracket" edge="1" parent="1" source="tx-open-lbl" target="tx-commit-lbl"
+          style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#F7EB07;strokeWidth=2;dashed=1;endArrow=block;endFill=0;flowAnimation=1;fontColor=#F7EB07;fontSize=9;"
+          value="">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
@@ -1260,6 +1285,349 @@
           style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontColor=#666666;fontSize=12;"
           vertex="1">
           <mxGeometry x="100" y="1094" width="1000" height="44" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="db-layer" name="Flow 11 — Data / Persistence Layer">
+    <mxGraphModel dx="1042" dy="626" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1400" pageHeight="2200" background="#000000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ── Title ── -->
+        <mxCell id="db-title" parent="1"
+          style="text;html=1;align=center;fontColor=#FF6A00;fontStyle=1;fontSize=22;strokeColor=none;fillColor=none;"
+          value="Spring Boot — Flow 11 : Data / Persistence Layer (PostgreSQL)" vertex="1">
+          <mxGeometry x="160" y="20" width="880" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ── Legend ── -->
+        <mxCell id="db-leg1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;fontColor=#39FF14;fontStyle=1;fontSize=11;" value="Spring AOP TX Proxy" vertex="1">
+          <mxGeometry x="20" y="80" width="160" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="db-leg2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;fontColor=#F7EB07;fontStyle=1;fontSize=11;" value="@Transactional / Service" vertex="1">
+          <mxGeometry x="20" y="112" width="160" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="db-leg3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1DE9B6;fontColor=#1DE9B6;fontStyle=1;fontSize=11;" value="Repository / Hibernate" vertex="1">
+          <mxGeometry x="20" y="144" width="160" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="db-leg4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF6A00;fontColor=#FF6A00;fontStyle=1;fontSize=11;" value="Database / SQL" vertex="1">
+          <mxGeometry x="20" y="176" width="160" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="db-leg5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#BC13FE;fontColor=#BC13FE;fontStyle=1;fontSize=11;" value="REQUIRES_NEW" vertex="1">
+          <mxGeometry x="20" y="208" width="160" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="db-leg6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF1744;fontColor=#FF1744;fontStyle=1;fontSize=11;" value="ROLLBACK / Exception" vertex="1">
+          <mxGeometry x="20" y="240" width="160" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="db-leg7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;fontColor=#00E7FF;fontStyle=1;fontSize=11;" value="readOnly Transaction" vertex="1">
+          <mxGeometry x="20" y="272" width="160" height="26" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- MAIN TRANSACTION PIPELINE (LEFT COLUMN)                        -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+
+        <mxCell id="db-http" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=13;"
+          value="HTTP Request → Controller → calls @Transactional service method" vertex="1">
+          <mxGeometry x="220" y="80" width="460" height="54" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-aop" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=13;"
+          value="Spring AOP TX Proxy intercepts the @Transactional method call" vertex="1">
+          <mxGeometry x="220" y="184" width="460" height="54" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-txmgr" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=13;"
+          value="PlatformTransactionManager.getTransaction()&#xa;Checks Propagation → REQUIRED: join or start | REQUIRES_NEW: start fresh | readOnly: hint" vertex="1">
+          <mxGeometry x="220" y="288" width="460" height="64" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-hikari" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#F7EB07;strokeWidth=1.5;fontColor=#F7EB07;fontStyle=0;fontSize=13;"
+          value="HikariCP Connection Pool → borrows JDBC connection (max-pool-size: 10)&#xa;connection bound to current thread for duration of TX" vertex="1">
+          <mxGeometry x="220" y="402" width="460" height="64" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-hibernate" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1DE9B6;strokeWidth=1.5;fontColor=#1DE9B6;fontStyle=0;fontSize=13;"
+          value="Hibernate Session (EntityManager) bound to thread&#xa;Entity lifecycle: TRANSIENT → PERSISTENT (managed) → DETACHED" vertex="1">
+          <mxGeometry x="220" y="516" width="460" height="64" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-repo" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1DE9B6;strokeWidth=1.5;fontColor=#1DE9B6;fontStyle=0;fontSize=13;"
+          value="UserRepository (@Repository + JpaRepository&lt;UserEntity, Long&gt;)&#xa;save() / findById() / findByDepartment() / delete() / existsByEmail()" vertex="1">
+          <mxGeometry x="220" y="630" width="460" height="64" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-dirty" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1DE9B6;strokeWidth=1.5;fontColor=#1DE9B6;fontStyle=0;fontSize=13;"
+          value="Hibernate dirty-check on TX commit&#xa;Snapshots entity at load → diffs → UPDATE SQL only for changed fields" vertex="1">
+          <mxGeometry x="220" y="744" width="460" height="64" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-sql" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF6A00;strokeWidth=1.5;fontColor=#FF6A00;fontStyle=0;fontSize=13;"
+          value="Hibernate flush → SQL generated &amp; executed via JDBC&#xa;INSERT / SELECT / UPDATE / DELETE → sent to PostgreSQL driver" vertex="1">
+          <mxGeometry x="220" y="858" width="460" height="64" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-pg" parent="1"
+          style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=none;strokeColor=#FF6A00;strokeWidth=1.5;fontColor=#FF6A00;fontStyle=0;fontSize=13;"
+          value="PostgreSQL — users table&#xa;(ddl-auto: update → schema auto-created on first run)" vertex="1">
+          <mxGeometry x="220" y="972" width="460" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-commit" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#39FF14;strokeWidth=1.5;fontColor=#39FF14;fontStyle=0;fontSize=13;"
+          value="PlatformTransactionManager.commit()&#xa;COMMIT → PostgreSQL acknowledges → connection returned to HikariCP pool" vertex="1">
+          <mxGeometry x="220" y="1102" width="460" height="64" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-return" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#00E7FF;strokeWidth=1.5;fontColor=#00E7FF;fontStyle=0;fontSize=13;"
+          value="Result returned to Controller → HTTP Response (200 / 201 / 404 / 409)" vertex="1">
+          <mxGeometry x="220" y="1216" width="460" height="54" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-rollback" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF1744;strokeWidth=1.5;fontColor=#FF1744;fontStyle=0;fontSize=13;"
+          value="RuntimeException → Spring AOP catches → transactionManager.rollback()&#xa;All queued SQL discarded → ROLLBACK sent to PostgreSQL" vertex="1">
+          <mxGeometry x="220" y="1320" width="460" height="64" as="geometry" />
+        </mxCell>
+
+        <!-- Pipeline edges -->
+        <mxCell id="db-e1" edge="1" parent="1" source="db-http" target="db-aop"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#39FF14;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#39FF14;fontSize=10;"
+          value="@Transactional call">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db-e2" edge="1" parent="1" source="db-aop" target="db-txmgr"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#F7EB07;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#F7EB07;fontSize=10;"
+          value="getTransaction()">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db-e3" edge="1" parent="1" source="db-txmgr" target="db-hikari"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#F7EB07;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#F7EB07;fontSize=10;"
+          value="borrow connection">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db-e4" edge="1" parent="1" source="db-hikari" target="db-hibernate"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#1DE9B6;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#1DE9B6;fontSize=10;"
+          value="bind Session to thread">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db-e5" edge="1" parent="1" source="db-hibernate" target="db-repo"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#1DE9B6;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#1DE9B6;fontSize=10;"
+          value="repository calls">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db-e6" edge="1" parent="1" source="db-repo" target="db-dirty"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#1DE9B6;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#1DE9B6;fontSize=10;"
+          value="on TX commit">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db-e7" edge="1" parent="1" source="db-dirty" target="db-sql"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF6A00;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#FF6A00;fontSize=10;"
+          value="flush → SQL">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db-e8" edge="1" parent="1" source="db-sql" target="db-pg"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF6A00;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#FF6A00;fontSize=10;"
+          value="JDBC execute">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db-e9" edge="1" parent="1" source="db-pg" target="db-commit"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#39FF14;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#39FF14;fontSize=10;"
+          value="result set → COMMIT">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db-e10" edge="1" parent="1" source="db-commit" target="db-return"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#00E7FF;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#00E7FF;fontSize=10;"
+          value="200 / 201">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db-e11" edge="1" parent="1" source="db-repo" target="db-rollback"
+          style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#FF1744;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#FF1744;fontSize=10;"
+          value="RuntimeException">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="180" y="662" />
+              <mxPoint x="180" y="1352" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- @Transactional scope label -->
+        <mxCell id="db-scope-lbl" parent="1"
+          style="text;html=1;align=center;fontColor=#F7EB07;fontStyle=1;fontSize=12;rotation=-90;strokeColor=none;fillColor=none;"
+          value="@Transactional SCOPE" vertex="1">
+          <mxGeometry x="128" y="730" width="190" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- SUB-FLOW COMPARISON PANEL (RIGHT COLUMN)                       -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+
+        <mxCell id="db-panel-title" parent="1"
+          style="text;html=1;align=center;fontColor=#FFFFFF;fontStyle=1;fontSize=15;strokeColor=none;fillColor=none;"
+          value="Propagation Types &amp; Sub-Flow Behavior" vertex="1">
+          <mxGeometry x="800" y="80" width="380" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- 11a REQUIRED INSERT -->
+        <mxCell id="db-11a-t" parent="1"
+          style="text;html=1;align=left;fontColor=#F7EB07;fontStyle=1;fontSize=13;strokeColor=none;fillColor=none;"
+          value="11a — INSERT  (Propagation.REQUIRED)" vertex="1">
+          <mxGeometry x="800" y="118" width="380" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="db-11a-b" parent="1"
+          style="text;html=1;align=left;fontColor=#CCCCCC;fontStyle=0;fontSize=11;strokeColor=#F7EB07;fillColor=none;rounded=1;whiteSpace=wrap;verticalAlign=top;"
+          value="POST /api/users/db&#xa;1. AOP opens new TX (no caller TX exists)&#xa;2. existsByEmail() → SELECT uniqueness check&#xa;3. save() → Hibernate queues INSERT&#xa;4. Return → flush → INSERT SQL → COMMIT&#xa;&#xa;DuplicateEmailException → ROLLBACK → 409" vertex="1">
+          <mxGeometry x="800" y="146" width="380" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- 11b READ_ONLY SELECT -->
+        <mxCell id="db-11b-t" parent="1"
+          style="text;html=1;align=left;fontColor=#00E7FF;fontStyle=1;fontSize=13;strokeColor=none;fillColor=none;"
+          value="11b — SELECT  (readOnly = true)" vertex="1">
+          <mxGeometry x="800" y="286" width="380" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="db-11b-b" parent="1"
+          style="text;html=1;align=left;fontColor=#CCCCCC;fontStyle=0;fontSize=11;strokeColor=#00E7FF;fillColor=none;rounded=1;whiteSpace=wrap;verticalAlign=top;"
+          value="GET /api/users/db/{id}&#xa;GET /api/users/db&#xa;GET /api/users/db/dept/{dept}&#xa;1. TX opened with readOnly=true hint&#xa;2. Hibernate skips dirty-check overhead&#xa;3. DB may route to read replica&#xa;4. findById() / findAll() / findByDept()&#xa;5. Write attempt → exception at flush time" vertex="1">
+          <mxGeometry x="800" y="314" width="380" height="136" as="geometry" />
+        </mxCell>
+
+        <!-- 11c UPDATE dirty-check -->
+        <mxCell id="db-11c-t" parent="1"
+          style="text;html=1;align=left;fontColor=#F7EB07;fontStyle=1;fontSize=13;strokeColor=none;fillColor=none;"
+          value="11c — UPDATE  (Hibernate dirty-check)" vertex="1">
+          <mxGeometry x="800" y="470" width="380" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="db-11c-b" parent="1"
+          style="text;html=1;align=left;fontColor=#CCCCCC;fontStyle=0;fontSize=11;strokeColor=#F7EB07;fillColor=none;rounded=1;whiteSpace=wrap;verticalAlign=top;"
+          value="PUT /api/users/db/{id}&#xa;1. findById() → managed entity in Session&#xa;2. entity.setName() / setEmail() / setDept()&#xa;3. No save() call  ← dirty-check handles it&#xa;4. TX commit → diff detected → UPDATE SQL&#xa;   (only changed columns sent to DB)" vertex="1">
+          <mxGeometry x="800" y="498" width="380" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- 11d DELETE -->
+        <mxCell id="db-11d-t" parent="1"
+          style="text;html=1;align=left;fontColor=#F7EB07;fontStyle=1;fontSize=13;strokeColor=none;fillColor=none;"
+          value="11d — DELETE  (Propagation.REQUIRED)" vertex="1">
+          <mxGeometry x="800" y="638" width="380" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="db-11d-b" parent="1"
+          style="text;html=1;align=left;fontColor=#CCCCCC;fontStyle=0;fontSize=11;strokeColor=#F7EB07;fillColor=none;rounded=1;whiteSpace=wrap;verticalAlign=top;"
+          value="DELETE /api/users/db/{id}&#xa;1. findById() → managed entity&#xa;2. repository.delete(entity) → REMOVED state&#xa;3. TX commit → DELETE SQL fires → COMMIT&#xa;Not found → NoSuchElementException → 404" vertex="1">
+          <mxGeometry x="800" y="666" width="380" height="108" as="geometry" />
+        </mxCell>
+
+        <!-- 11e ROLLBACK -->
+        <mxCell id="db-11e-t" parent="1"
+          style="text;html=1;align=left;fontColor=#FF1744;fontStyle=1;fontSize=13;strokeColor=none;fillColor=none;"
+          value="11e — ROLLBACK demo  (ACID Atomicity)" vertex="1">
+          <mxGeometry x="800" y="794" width="380" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="db-11e-b" parent="1"
+          style="text;html=1;align=left;fontColor=#CCCCCC;fontStyle=0;fontSize=11;strokeColor=#FF1744;fillColor=none;rounded=1;whiteSpace=wrap;verticalAlign=top;"
+          value="POST /api/users/db/rollback&#xa;body: [{user1}, {user2}]&#xa;&#xa;1. TX OPEN (REQUIRED)&#xa;2. INSERT user1 queued  ┐ both pending&#xa;3. INSERT user2 queued  ┘ in same TX&#xa;4. throw RuntimeException intentionally&#xa;5. Spring AOP → transactionManager.rollback()&#xa;6. NEITHER user reaches the DB  ← ACID Atomicity&#xa;&#xa;Response: { result: 'ROLLED BACK', ... }" vertex="1">
+          <mxGeometry x="800" y="822" width="380" height="172" as="geometry" />
+        </mxCell>
+
+        <!-- 11f REQUIRES_NEW -->
+        <mxCell id="db-11f-t" parent="1"
+          style="text;html=1;align=left;fontColor=#BC13FE;fontStyle=1;fontSize=13;strokeColor=none;fillColor=none;"
+          value="11f — REQUIRES_NEW  (independent transaction)" vertex="1">
+          <mxGeometry x="800" y="1014" width="380" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="db-11f-b" parent="1"
+          style="text;html=1;align=left;fontColor=#CCCCCC;fontStyle=0;fontSize=11;strokeColor=#BC13FE;fillColor=none;rounded=1;whiteSpace=wrap;verticalAlign=top;"
+          value="POST /api/users/db/new-tx&#xa;1. Caller TX (if any) → SUSPENDED&#xa;2. Brand-new independent TX opened&#xa;3. INSERT → COMMIT independently&#xa;4. Caller TX RESUMED after method returns&#xa;&#xa;Use-case: audit logs, outbox events —&#xa;   persists even if outer TX rolls back&#xa;&#xa;⚠  Self-call trap: REQUIRES_NEW in same bean&#xa;   → AOP proxy bypassed → same TX used!&#xa;   Always call from a different bean." vertex="1">
+          <mxGeometry x="800" y="1042" width="380" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- ENTITY LIFECYCLE                                               -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+
+        <mxCell id="db-el-title" parent="1"
+          style="text;html=1;align=center;fontColor=#FFFFFF;fontStyle=1;fontSize=15;strokeColor=none;fillColor=none;"
+          value="JPA Entity Lifecycle" vertex="1">
+          <mxGeometry x="220" y="1430" width="460" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-transient" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#AAAAAA;strokeWidth=1.5;fontColor=#AAAAAA;fontStyle=0;fontSize=12;"
+          value="TRANSIENT&#xa;new UserEntity(...)&#xa;not tracked by Hibernate" vertex="1">
+          <mxGeometry x="60" y="1480" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-persistent" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#1DE9B6;strokeWidth=1.5;fontColor=#1DE9B6;fontStyle=0;fontSize=12;"
+          value="PERSISTENT (Managed)&#xa;save() / findById()&#xa;dirty-check active — tracked" vertex="1">
+          <mxGeometry x="330" y="1480" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-detached" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF8C00;strokeWidth=1.5;fontColor=#FF8C00;fontStyle=0;fontSize=12;"
+          value="DETACHED&#xa;TX / Session closed&#xa;needs merge() to re-attach" vertex="1">
+          <mxGeometry x="600" y="1480" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-removed" parent="1"
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#FF1744;strokeWidth=1.5;fontColor=#FF1744;fontStyle=0;fontSize=12;"
+          value="REMOVED&#xa;repository.delete(entity)&#xa;DELETE SQL on flush/commit" vertex="1">
+          <mxGeometry x="330" y="1600" width="200" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-es1" edge="1" parent="1" source="db-transient" target="db-persistent"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#1DE9B6;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#1DE9B6;fontSize=10;"
+          value="save()">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db-es2" edge="1" parent="1" source="db-persistent" target="db-detached"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF8C00;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#FF8C00;fontSize=10;"
+          value="TX closed">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db-es3" edge="1" parent="1" source="db-persistent" target="db-removed"
+          style="edgeStyle=orthogonalEdgeStyle;strokeColor=#FF1744;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#FF1744;fontSize=10;"
+          value="delete()">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="db-es4" edge="1" parent="1" source="db-detached" target="db-persistent"
+          style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#1DE9B6;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;flowAnimation=1;fontColor=#1DE9B6;fontSize=10;"
+          value="merge()">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="1590" />
+              <mxPoint x="430" y="1590" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ── Key Insight Boxes ── -->
+        <mxCell id="db-tip1" parent="1"
+          style="text;html=1;align=left;fontColor=#F7EB07;fontStyle=2;fontSize=11;strokeColor=#F7EB07;fillColor=none;rounded=1;whiteSpace=wrap;verticalAlign=top;"
+          value="💡 No save() needed after mutation: Hibernate snapshots the entity&#xa;   state at load time, diffs at commit, generates UPDATE only&#xa;   for actually changed columns (dirty-check)." vertex="1">
+          <mxGeometry x="800" y="1260" width="380" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="db-tip2" parent="1"
+          style="text;html=1;align=left;fontColor=#00E7FF;fontStyle=2;fontSize=11;strokeColor=#00E7FF;fillColor=none;rounded=1;whiteSpace=wrap;verticalAlign=top;"
+          value="💡 readOnly: Never call save() / delete() in a readOnly=true&#xa;   method — Hibernate throws at flush time." vertex="1">
+          <mxGeometry x="800" y="1360" width="380" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="db-tip3" parent="1"
+          style="text;html=1;align=left;fontColor=#BC13FE;fontStyle=2;fontSize=11;strokeColor=#BC13FE;fillColor=none;rounded=1;whiteSpace=wrap;verticalAlign=top;"
+          value="💡 ddl-auto: update → Hibernate auto-creates users table on&#xa;   first run. Use validate + Flyway/Liquibase in production." vertex="1">
+          <mxGeometry x="800" y="1444" width="380" height="65" as="geometry" />
         </mxCell>
 
       </root>
